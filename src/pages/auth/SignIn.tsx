@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -15,10 +16,20 @@ export const SignIn = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await axios
-      .post(`https://fin12.onesystem.uz/api/v1/api/token/`, formData)
-      .then((response) => console.log(response.data))
-      .catch((error) => console.error(error));
+
+    try {
+      await axios
+        .post(`https://fin12.onesystem.uz/api/v1/api/token/`, formData)
+        .then((response) => console.log(response.data));
+      alert("Successfully signed in!");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setFormData({
+        username: "",
+        password: "",
+      });
+    }
   };
 
   return (
@@ -28,9 +39,9 @@ export const SignIn = () => {
           Financial Management
         </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-y-6">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-y-6 mb-10">
           <label htmlFor="username" className="flex flex-col gap-y-2">
-            <span>User Name</span>
+            <span>User name</span>
             <input
               type="text"
               name="username"
@@ -57,6 +68,12 @@ export const SignIn = () => {
             Login
           </button>
         </form>
+        <Link
+          to={"/signup"}
+          className="block font-semibold text-center text-[#f8c023]"
+        >
+          Create an account
+        </Link>
       </div>
     </div>
   );

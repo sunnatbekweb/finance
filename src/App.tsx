@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function App() {
   return (
     <div className="flex items-center justify-center h-screen">
@@ -6,6 +8,7 @@ function App() {
           <span className="font-normal">Welcome to the</span> <br />
           Financial Management Dashboard
         </h1>
+        <Link to={"/signup"} className="block font-semibold text-2xl text-[#f8c023] text-center">Start</Link>
       </div>
     </div>
   );

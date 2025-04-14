@@ -9,11 +9,11 @@ export const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/login",
+    path: "/signin",
     element: <SignIn />,
   },
   {
-    path: "/register",
+    path: "/signup",
     element: <SignUp />,
   },
 ]);
