@@ -2,9 +2,16 @@
 
 :root {
   --default-black: #1e1e1e;
-  
 }
 
 body {
   font-family: "Inter", sans-serif;
+}
+
+button {
+  cursor: pointer;
+}
+
+.fontPoppins {
+  font-family: "Poppins", sans-serif;
 }
