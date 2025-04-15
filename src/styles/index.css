@@ -15,3 +15,13 @@ button {
 .fontPoppins {
   font-family: "Poppins", sans-serif;
 }
+
+input, textarea, select {
+  padding: 8px 16px;
+  border: 1px solid #f8c023;
+  border-radius: 4px;
+
+  &:focus {
+    outline-color: #f8c023;
+  }
+}
