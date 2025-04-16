@@ -17,3 +17,23 @@ export type ModalProps = {
     description: string;
   }) => void;
 };
+
+export type DebtModalProps = {
+  modal: boolean;
+  onClose: () => void;
+  submit: (formData: {
+    is_positive: string;
+    amount: string;
+    description: string;
+  }) => void;
+};
+
+export type Debt = {
+  id: number;
+  amount: string;
+  description: string;
+  date: string;
+  is_positive: boolean;
+};
+
+export type DebtsList = Debt[];

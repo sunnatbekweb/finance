@@ -1,85 +1,143 @@
+import { DebtModal } from "@/components/ui/modal/DebtModal";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { DebtsList } from "@/types";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const Debts = () => {
-  const [formData, setFormData] = useState({
-    is_positive: "",
-    amount: "",
-    description: "",
-  });
+  const [debts, setDebts] = useState<DebtsList>();
+  const [modal, setModal] = useState(false);
+  const token = localStorage.getItem("access_token");
+  const totalAmount = debts?.reduce(
+    (acc, curr) => acc + Number(curr.amount),
+    0
+  );
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const closeModal = () => setModal(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  useEffect(() => {
+    getDebts();
+  }, []);
 
-    const token = localStorage.getItem("access_token");
-
+  async function getDebts() {
     if (token) {
       try {
         await axios
-          .post(`${import.meta.env.VITE_BASE_URL}/debts/`, formData, {
+          .get(`${import.meta.env.VITE_BASE_URL}/debts/`, {
             headers: {
               Authorization: `Bearer ${JSON.parse(token)}`,
             },
           })
-          .then((response) => console.log(response.data));
-
-        alert("Created transaction!");
+          .then((response) => setDebts(response.data));
       } catch (error) {
         console.error(error);
       }
     }
+  }
+
+  const handleSubmit = async (formData: {
+    is_positive: string;
+    amount: string;
+    description: string;
+  }) => {
+    if (token) {
+      if (token) {
+        try {
+          await axios
+            .post(`${import.meta.env.VITE_BASE_URL}/debts/`, formData, {
+              headers: {
+                Authorization: `Bearer ${JSON.parse(token)}`,
+              },
+            })
+            .then((response) => console.log(response.data));
+          alert("Created debt!");
+          closeModal();
+          getDebts();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
   };
+
   return (
-    <div className="w-1/2">
-      <form className="flex flex-col gap-y-5" onSubmit={handleSubmit}>
-        <label htmlFor="is_positive" className="flex flex-col gap-y-2">
-          <span>Slect positive</span>
-          <select
-            name="is_positive"
-            id="is_positive"
-            onChange={handleChange}
-            value={formData.is_positive}
-          >
-            <option value="0" disabled>
-              Slect positive
-            </option>
-            <option value="true">True</option>
-            <option value="false">False</option>
-          </select>
-        </label>
-        <label htmlFor="amount" className="flex flex-col gap-y-2">
-          <span>Amount</span>
-          <input
-            type="text"
-            name="amount"
-            id="amount"
-            onChange={handleChange}
-            value={formData.amount}
-            required
-          />
-        </label>
-        <label htmlFor="description" className="flex flex-col gap-y-2">
-          <span>Description</span>
-          <textarea
-            name="description"
-            id="description"
-            onChange={handleChange}
-            value={formData.description}
-            required
-          ></textarea>
-        </label>
-        <button className="py-2 text-white rounded bg-[#f8c023] hover:opacity-80 duration-300">
-          Add transaction
+    <div className="p-10">
+      <div className="w-full h-fit flex items-center justify-between mb-5">
+        <h2 className="font-bold text-2xl text-center">Transactions</h2>
+        <DebtModal modal={modal} onClose={closeModal} submit={handleSubmit} />
+        <button
+          onClick={() => setModal(true)}
+          className="py-2 px-4 text-white text-xs rounded bg-[#f8c023] hover:opacity-80 duration-300"
+        >
+          Add debt
         </button>
-      </form>
+      </div>
+      <div>
+        <Table>
+          <TableCaption>A list of transactions.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Amount</TableHead>
+              <TableHead className="text-center">Description</TableHead>
+              <TableHead className="text-right">Date</TableHead>
+              <TableHead className="text-right">Date</TableHead>{" "}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {debts?.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>${item.amount}</TableCell>
+                <TableCell className="text-center">
+                  {item.description}
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center justify-end gap-x-2">
+                    <span>
+                      {new Date(item?.date ?? "").toLocaleDateString("ru-RU", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </span>
+                    {"|"}
+                    <span>
+                      {new Date(item.date).toLocaleTimeString("ru-RU", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right">
+                  <input
+                    type="checkbox"
+                    name="is_positive"
+                    id="is_positive"
+                    checked={item.is_positive ? true : false}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={3}>Total</TableCell>
+              <TableCell className="text-right">
+                ${totalAmount?.toFixed(2)}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
     </div>
   );
 };

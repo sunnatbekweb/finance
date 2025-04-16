@@ -16,20 +16,16 @@ import { TransactionModal } from "@/components/ui/modal/TransactionModal";
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<TransactionsList>();
   const [modal, setModal] = useState(false);
-
+  const token = localStorage.getItem("access_token");
   const totalAmount = transactions?.reduce(
     (acc, curr) => acc + Number(curr.amount),
     0
   );
-  const token = localStorage.getItem("access_token");
 
-  const closeModal = () => {
-    setModal(false);
-  };
+  const closeModal = () => setModal(false);
 
   useEffect(() => {
     getTransactions();
-    console.log(transactions);
   }, []);
 
   async function getTransactions() {
