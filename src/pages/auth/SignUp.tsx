@@ -10,7 +10,6 @@ export const SignUp = () => {
     password: "",
     password2: "",
   });
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -21,10 +20,8 @@ export const SignUp = () => {
     e.preventDefault();
     try {
       await axios
-        .post(`https://fin12.onesystem.uz/api/v1/register/`, formData)
-        .then((response) => console.log(response.data));
-
-      alert("Successfully created account!");
+        .post(`https://fin12.onesystem.uz/api/v1/api/register/`, formData)
+        .then(() => alert("Successfully created account!"));
     } catch (error) {
       console.error(error);
     } finally {
@@ -58,6 +55,7 @@ export const SignUp = () => {
               id="username"
               placeholder=""
               onChange={handleChange}
+              value={formData.username}
               className="px-4 py-3 rounded border focus:outline-[#f8c023]"
               required
             />
@@ -70,6 +68,7 @@ export const SignUp = () => {
               id="first_name"
               placeholder=""
               onChange={handleChange}
+              value={formData.first_name}
               className="px-4 py-3 rounded border focus:outline-[#f8c023]"
               required
             />
@@ -82,6 +81,7 @@ export const SignUp = () => {
               id="last_name"
               placeholder=""
               onChange={handleChange}
+              value={formData.last_name}
               className="px-4 py-3 rounded border focus:outline-[#f8c023]"
               required
             />
@@ -94,6 +94,7 @@ export const SignUp = () => {
               id="password"
               placeholder=""
               onChange={handleChange}
+              value={formData.password}
               className="px-4 py-3 rounded border focus:outline-[#f8c023]"
               required
             />
@@ -106,12 +107,13 @@ export const SignUp = () => {
               id="password2"
               placeholder=""
               onChange={handleChange}
+              value={formData.password2}
               className="px-4 py-3 rounded border focus:outline-[#f8c023]"
               required
             />
           </label>
           <button className="py-3 px-4 bg-[#f8c023] text-white rounded w-full">
-            Login
+            Sign up
           </button>
         </form>
         <p className="text-center text-gray-400">

@@ -1,12 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const SignIn = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -19,9 +20,15 @@ export const SignIn = () => {
 
     try {
       await axios
-        .post(`https://fin12.onesystem.uz/api/v1/api/token/`, formData)
-        .then((response) => console.log(response.data));
+        .post(`https://fin12.onesystem.uz/api/v1/api/login/`, formData)
+        .then((response) =>
+          localStorage.setItem("tokens", JSON.stringify(response.data))
+        );
+
       alert("Successfully signed in!");
+      setTimeout(() => {
+        navigate("/");
+      }, 500);
     } catch (error) {
       console.error(error);
     } finally {
@@ -48,6 +55,7 @@ export const SignIn = () => {
               id="username"
               placeholder=""
               onChange={handleChange}
+              value={formData.username}
               className="px-4 py-3 rounded border focus:outline-[#f8c023]"
               required
             />
@@ -60,6 +68,7 @@ export const SignIn = () => {
               id="password"
               placeholder=""
               onChange={handleChange}
+              value={formData.password}
               className="px-4 py-3 rounded border focus:outline-[#f8c023]"
               required
             />
