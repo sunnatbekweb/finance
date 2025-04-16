@@ -20,10 +20,17 @@ export const SignIn = () => {
 
     try {
       await axios
-        .post(`https://fin12.onesystem.uz/api/v1/api/login/`, formData)
-        .then((response) =>
-          localStorage.setItem("tokens", JSON.stringify(response.data))
-        );
+        .post(`${import.meta.env.VITE_BASE_URL}/login/`, formData)
+        .then((response) => {
+          localStorage.setItem(
+            "access_token",
+            JSON.stringify(response.data.access)
+          ),
+            localStorage.setItem(
+              "refresh_token",
+              JSON.stringify(response.data.refresh)
+            );
+        });
 
       alert("Successfully signed in!");
       setTimeout(() => {

@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export const Debts = () => {
   const [formData, setFormData] = useState({
-    is_positive: Boolean,
+    is_positive: "",
     amount: "",
     description: "",
   });
@@ -19,14 +19,22 @@ export const Debts = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    try {
-      await axios
-        .post(`https://fin12.onesystem.uz/api/v1/debts/`, formData)
-        .then((response) => console.log(response.data));
+    const token = localStorage.getItem("access_token");
 
-      alert("Created transaction!");
-    } catch (error) {
-      console.error(error);
+    if (token) {
+      try {
+        await axios
+          .post(`${import.meta.env.VITE_BASE_URL}/debts/`, formData, {
+            headers: {
+              Authorization: `Bearer ${JSON.parse(token)}`,
+            },
+          })
+          .then((response) => console.log(response.data));
+
+        alert("Created transaction!");
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
   return (
@@ -34,7 +42,12 @@ export const Debts = () => {
       <form className="flex flex-col gap-y-5" onSubmit={handleSubmit}>
         <label htmlFor="is_positive" className="flex flex-col gap-y-2">
           <span>Slect positive</span>
-          <select name="is_positive" id="is_positive" onChange={handleChange}>
+          <select
+            name="is_positive"
+            id="is_positive"
+            onChange={handleChange}
+            value={formData.is_positive}
+          >
             <option value="0" disabled>
               Slect positive
             </option>
@@ -49,6 +62,8 @@ export const Debts = () => {
             name="amount"
             id="amount"
             onChange={handleChange}
+            value={formData.amount}
+            required
           />
         </label>
         <label htmlFor="description" className="flex flex-col gap-y-2">
@@ -57,6 +72,8 @@ export const Debts = () => {
             name="description"
             id="description"
             onChange={handleChange}
+            value={formData.description}
+            required
           ></textarea>
         </label>
         <button className="py-2 text-white rounded bg-[#f8c023] hover:opacity-80 duration-300">

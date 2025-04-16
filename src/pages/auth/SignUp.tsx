@@ -20,7 +20,7 @@ export const SignUp = () => {
     e.preventDefault();
     try {
       await axios
-        .post(`https://fin12.onesystem.uz/api/v1/api/register/`, formData)
+        .post(`${import.meta.env.VITE_BASE_URL}/register/`, formData)
         .then(() => alert("Successfully created account!"));
     } catch (error) {
       console.error(error);
