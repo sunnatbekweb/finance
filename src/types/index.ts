@@ -7,3 +7,8 @@ export type Transaction = {
 };
 
 export type TransactionsList = Transaction[];
+
+export type ModalProps = {
+  modal: boolean;
+  onClose: () => void;
+};

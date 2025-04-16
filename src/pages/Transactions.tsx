@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,32 +11,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TransactionsList } from "@/types";
+import { TransactionModal } from "@/components/ui/modal/TransactionModal";
 
 export const Transactions = () => {
-  const [formData, setFormData] = useState({
-    transaction_type: "",
-    amount: "",
-    description: "",
-  });
   const [transactions, setTransactions] = useState<TransactionsList>();
+  const [modal, setModal] = useState(false);
   const totalAmount = transactions?.reduce(
     (acc, curr) => acc + Number(curr.amount),
     0
   );
   const token = localStorage.getItem("access_token");
 
+  const closeModal = () => {
+    setModal(false);
+  };
+
   useEffect(() => {
     getDebts();
     console.log(transactions);
   }, []);
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   async function getDebts() {
     if (token) {
@@ -54,99 +47,59 @@ export const Transactions = () => {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (token) {
-      try {
-        await axios
-          .post(`${import.meta.env.VITE_BASE_URL}/transactions/`, formData, {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token)}`,
-            },
-          })
-          .then((response) => console.log(response.data));
-
-        alert("Created transaction!");
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
   return (
     <div className="w-full flex flex-col">
-      <form
-        className="w-1/2 flex flex-col gap-y-5 mx-auto"
-        onSubmit={handleSubmit}
-      >
-        <label htmlFor="transaction_type" className="flex flex-col gap-y-2">
-          <span>Slect transaction type</span>
-          <select
-            name="transaction_type"
-            id="transaction_type"
-            onChange={handleChange}
-            value={formData.transaction_type}
+      <div className="p-10">
+        <div className="w-full h-fit flex items-center justify-between mb-5">
+          <h2 className="font-bold text-2xl text-center">Transactions</h2>
+          <TransactionModal modal={modal} onClose={closeModal} />
+          <button
+            onClick={() => setModal(true)}
+            className="py-2 px-4 text-white text-xs rounded bg-[#f8c023] hover:opacity-80 duration-300"
           >
-            <option value="" disabled>
-              Slect transaction type
-            </option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-        </label>
-        <label htmlFor="amount" className="flex flex-col gap-y-2">
-          <span>Amount</span>
-          <input
-            type="text"
-            name="amount"
-            id="amount"
-            onChange={handleChange}
-          />
-        </label>
-        <label htmlFor="description" className="flex flex-col gap-y-2">
-          <span>Description</span>
-          <textarea
-            name="description"
-            id="description"
-            onChange={handleChange}
-          ></textarea>
-        </label>
-        <button className="py-2 text-white rounded bg-[#f8c023] hover:opacity-80 duration-300">
-          Add transaction
-        </button>
-      </form>
-      <div className="py-20 px-10">
-        <h2 className="font-bold text-4xl text-center">Transactions</h2>
+            Add transaction
+          </button>
+        </div>
         <div>
           <Table>
             <TableCaption>A list of transactions.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">Type</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead className="text-center">Description</TableHead>
+                <TableHead className="text-right">Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {transactions?.map((transaction) => (
                 <TableRow key={transaction.id}>
-                  <TableCell className="font-medium">
-                    {transaction.transaction_type}
-                  </TableCell>
-                  <TableCell>{transaction.description}</TableCell>
-                  <TableCell>
-                    {new Date(transaction?.date ?? "").toLocaleDateString(
-                      "ru-RU",
-                      {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      }
-                    )}
+                  <TableCell>${transaction.amount}</TableCell>
+                  <TableCell className="text-center">
+                    {transaction.description}
                   </TableCell>
                   <TableCell className="text-right">
-                    ${transaction.amount}
+                    <div className="flex items-center justify-end gap-x-2">
+                      <span>
+                        {new Date(transaction?.date ?? "").toLocaleDateString(
+                          "ru-RU",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          }
+                        )}
+                      </span>
+                      {"|"}
+                      <span>
+                        {new Date(transaction.date).toLocaleTimeString(
+                          "ru-RU",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
+                      </span>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
