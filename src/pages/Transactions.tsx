@@ -16,6 +16,7 @@ import { TransactionModal } from "@/components/ui/modal/TransactionModal";
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<TransactionsList>();
   const [modal, setModal] = useState(false);
+
   const totalAmount = transactions?.reduce(
     (acc, curr) => acc + Number(curr.amount),
     0
@@ -27,11 +28,11 @@ export const Transactions = () => {
   };
 
   useEffect(() => {
-    getDebts();
+    getTransactions();
     console.log(transactions);
   }, []);
 
-  async function getDebts() {
+  async function getTransactions() {
     if (token) {
       try {
         await axios
@@ -46,13 +47,41 @@ export const Transactions = () => {
       }
     }
   }
+  const handleSubmit = async (formData: {
+    transaction_type: string;
+    amount: string;
+    description: string;
+  }) => {
+    if (token) {
+      try {
+        await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/transactions/`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${JSON.parse(token)}`,
+            },
+          }
+        );
+        alert("Created transaction!");
+        closeModal();
+        getTransactions();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   return (
     <div className="w-full flex flex-col">
       <div className="p-10">
         <div className="w-full h-fit flex items-center justify-between mb-5">
           <h2 className="font-bold text-2xl text-center">Transactions</h2>
-          <TransactionModal modal={modal} onClose={closeModal} />
+          <TransactionModal
+            modal={modal}
+            onClose={closeModal}
+            submit={handleSubmit}
+          />
           <button
             onClick={() => setModal(true)}
             className="py-2 px-4 text-white text-xs rounded bg-[#f8c023] hover:opacity-80 duration-300"
