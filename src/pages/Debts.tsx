@@ -70,7 +70,7 @@ export const Debts = () => {
   };
 
   return (
-    <div className="w-full p-10">
+    <div className="w-full">
       <div className="w-full h-fit flex items-center justify-between mb-5">
         <h2 className="font-bold text-2xl text-center">Debts</h2>
         <DebtModal modal={modal} onClose={closeModal} submit={handleSubmit} />
@@ -86,6 +86,7 @@ export const Debts = () => {
           <TableCaption>A list of debts.</TableCaption>
           <TableHeader>
             <TableRow>
+              <TableHead>Id</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead className="text-center">Description</TableHead>
               <TableHead className="text-right">Date</TableHead>
@@ -95,6 +96,7 @@ export const Debts = () => {
           <TableBody>
             {debts?.map((item) => (
               <TableRow key={item.id}>
+                <TableCell>{item.id}</TableCell>
                 <TableCell>${item.amount}</TableCell>
                 <TableCell className="text-center">
                   {item.description}

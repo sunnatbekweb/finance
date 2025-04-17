@@ -19,26 +19,23 @@ export const SignIn = () => {
     e.preventDefault();
 
     try {
-      await axios
-        .post(`${import.meta.env.VITE_BASE_URL}/login/`, formData)
-        .then((response) => {
-          localStorage.setItem(
-            "access_token",
-            JSON.stringify(response.data.access)
-          ),
-            localStorage.setItem(
-              "refresh_token",
-              JSON.stringify(response.data.refresh)
-            );
-        });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/login/`,
+        formData
+      );
+      localStorage.setItem("access_token", JSON.stringify(response.data.access));
+      localStorage.setItem("refresh_token", JSON.stringify(response.data.refresh));
 
       alert("Successfully signed in!");
+
+      // После успешного логина — навигация
       setTimeout(() => {
-        navigate("/");
-      }, 500);
+        navigate("/"); // Перенаправление на главную страницу
+      }, 1000);
     } catch (error) {
-      console.error(error);
+      console.error("Login error:", error);
     } finally {
+      // Очистка полей формы
       setFormData({
         username: "",
         password: "",
@@ -60,7 +57,6 @@ export const SignIn = () => {
               type="text"
               name="username"
               id="username"
-              placeholder=""
               onChange={handleChange}
               value={formData.username}
               className="px-4 py-3 rounded border focus:outline-[#f8c023]"
@@ -73,7 +69,6 @@ export const SignIn = () => {
               type="password"
               name="password"
               id="password"
-              placeholder=""
               onChange={handleChange}
               value={formData.password}
               className="px-4 py-3 rounded border focus:outline-[#f8c023]"
