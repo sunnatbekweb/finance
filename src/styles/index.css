@@ -52,7 +52,7 @@ button {
 }
 
 input, textarea, select {
-  padding: 8px 16px;
+  padding: 6px 8px;
   border: 1px solid #f8c023;
   border-radius: 4px;
 
@@ -139,5 +139,18 @@ input, textarea, select {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+
+@media screen and (min-width: 768px) {
+  input, textarea, select {
+    padding: 8px 16px;
+    border: 1px solid #f8c023;
+    border-radius: 4px;
+  
+    &:focus {
+      outline-color: #f8c023;
+    }
   }
 }

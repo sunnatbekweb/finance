@@ -52,8 +52,8 @@ export const SignIn = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="max-w-[400px] mx-auto">
-        <h2 className="fontPoppins font-extrabold text-[40px] leading-9 tracking-[0.08em] text-center text-[#f8c023] mb-16">
+      <div className="w-full px-5 md:max-w-[400px] md:px-0 mx-auto">
+        <h2 className="fontPoppins font-extrabold text-3xl md:text-[40px] leading-9 tracking-[0.08em] text-center text-[#f8c023] mb-16">
           Financial Management
         </h2>
         <ToastContainer />

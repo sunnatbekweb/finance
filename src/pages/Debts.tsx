@@ -18,13 +18,11 @@ import axios from "axios";
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
   const [modal, setModal] = useState(false);
-  const totalAmount = debts?.reduce((acc, curr) => {
-    if (!curr.is_positive) {
-      return acc + Number(curr.amount);
-    }
-    return acc;
-  }, 0);
-
+  const totalAmount = debts?.reduce(
+    (acc, curr) => curr.is_positive ? acc - Number(curr.amount) : acc + Number(curr.amount),
+    0
+  );
+  
   const closeModal = () => setModal(false);
 
   useEffect(() => {
