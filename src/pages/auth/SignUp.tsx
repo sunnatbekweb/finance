@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 export const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,8 @@ export const SignUp = () => {
     password: "",
     password2: "",
   });
+  const navigate = useNavigate();
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -22,8 +25,14 @@ export const SignUp = () => {
       await axios
         .post(`${import.meta.env.VITE_BASE_URL}/register/`, formData)
         .then(() => alert("Successfully created account!"));
+
+      toast.success("Successfully created account!");
+      setTimeout(() => {
+        navigate("/login");
+      }, 500);
     } catch (error) {
       console.error(error);
+      toast.error("Error creating account!");
     } finally {
       setFormData({
         username: "",
@@ -45,6 +54,7 @@ export const SignUp = () => {
         <h3 className="text-2xl font-semibold text-center mb-8">
           Create an account
         </h3>
+        <ToastContainer />
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-y-6 mb-10">
           <label htmlFor="username" className="flex flex-col gap-y-2">

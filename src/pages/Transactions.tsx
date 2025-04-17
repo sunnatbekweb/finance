@@ -12,15 +12,18 @@ import {
 } from "@/components/ui/table";
 import { TransactionsList } from "@/types";
 import { TransactionModal } from "@/components/ui/modal/TransactionModal";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { refreshAccessToken } from "@/api/auth";
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<TransactionsList>();
   const [modal, setModal] = useState(false);
-  const token = localStorage.getItem("access_token");
-  const totalAmount = transactions?.reduce(
-    (acc, curr) => acc + Number(curr.amount),
-    0
-  );
+  const totalAmount = transactions?.reduce((acc, curr) => {
+    if (curr.transaction_type === "income") {
+      return acc + Number(curr.amount);
+    }
+    return acc;
+  }, 0);
 
   const closeModal = () => setModal(false);
 
@@ -29,40 +32,84 @@ export const Transactions = () => {
   }, []);
 
   async function getTransactions() {
-    if (token) {
-      try {
-        await axios
-          .get(`${import.meta.env.VITE_BASE_URL}/transactions/`, {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token)}`,
-            },
-          })
-          .then((response) => setTransactions(response.data));
-      } catch (error) {
+    let token = JSON.parse(localStorage.getItem("access_token") || "null");
+
+    if (!token) return;
+
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/transactions/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setTransactions(response.data);
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        try {
+          const newAccessToken = await refreshAccessToken();
+          const retryResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/transactions/`,
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+          setTransactions(retryResponse.data);
+        } catch (refreshError) {
+          console.error("Failed to refresh token", refreshError);
+        }
+      } else {
         console.error(error);
       }
     }
   }
+
   const handleSubmit = async (formData: {
     transaction_type: string;
     amount: string;
     description: string;
   }) => {
-    if (token) {
-      try {
-        await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/transactions/`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token)}`,
-            },
-          }
-        );
-        alert("Created transaction!");
-        closeModal();
-        getTransactions();
-      } catch (error) {
+    let token = JSON.parse(localStorage.getItem("access_token") || "null");
+
+    if (!token) return;
+
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/transactions/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert("Created transaction!");
+      closeModal();
+      getTransactions();
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        try {
+          const newAccessToken = await refreshAccessToken();
+          await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/transactions/`,
+            formData,
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+          alert("Created transaction!");
+          closeModal();
+          getTransactions();
+        } catch (refreshError) {
+          console.error("Failed to refresh token", refreshError);
+        }
+      } else {
         console.error(error);
       }
     }
@@ -71,7 +118,10 @@ export const Transactions = () => {
   return (
     <div className="w-full flex flex-col">
       <div className="w-full h-fit flex items-center justify-between mb-5">
-        <h2 className="font-bold text-2xl text-center">Transactions</h2>
+        <div className="flex items-center gap-x-5">
+          <SidebarTrigger />
+          <h2 className="font-bold text-2xl text-center">Transactions</h2>
+        </div>
         <TransactionModal
           modal={modal}
           onClose={closeModal}
@@ -134,7 +184,7 @@ export const Transactions = () => {
             <TableRow>
               <TableCell colSpan={3}>Total</TableCell>
               <TableCell className="text-right">
-                ${totalAmount?.toFixed(2)}
+                {totalAmount?.toFixed(2)} so'm
               </TableCell>
             </TableRow>
           </TableFooter>

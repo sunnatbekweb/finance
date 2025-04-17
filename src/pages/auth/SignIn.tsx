@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 export const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -23,17 +24,23 @@ export const SignIn = () => {
         `${import.meta.env.VITE_BASE_URL}/login/`,
         formData
       );
-      localStorage.setItem("access_token", JSON.stringify(response.data.access));
-      localStorage.setItem("refresh_token", JSON.stringify(response.data.refresh));
+      localStorage.setItem(
+        "access_token",
+        JSON.stringify(response.data.access)
+      );
+      localStorage.setItem(
+        "refresh_token",
+        JSON.stringify(response.data.refresh)
+      );
 
-      alert("Successfully signed in!");
-
+      toast.success("Successfully logined!");
       // После успешного логина — навигация
       setTimeout(() => {
         navigate("/"); // Перенаправление на главную страницу
       }, 1000);
     } catch (error) {
       console.error("Login error:", error);
+      toast.error("Error in login!");
     } finally {
       // Очистка полей формы
       setFormData({
@@ -49,6 +56,7 @@ export const SignIn = () => {
         <h2 className="fontPoppins font-extrabold text-[40px] leading-9 tracking-[0.08em] text-center text-[#f8c023] mb-16">
           Financial Management
         </h2>
+        <ToastContainer />
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-y-6 mb-10">
           <label htmlFor="username" className="flex flex-col gap-y-2">

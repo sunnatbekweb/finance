@@ -16,9 +16,11 @@ function App() {
   }
 
   // Если нет токена, редиректим на страницу входа
-  if (!accessToken) {
-    return <Navigate to="/login" />;
-  }
+  setTimeout(() => {
+    if (!accessToken) {
+      return <Navigate to="/login" />;
+    }
+  }, 1000);
 
   return (
     <SidebarProvider>

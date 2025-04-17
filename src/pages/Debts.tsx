@@ -11,16 +11,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DebtsList } from "@/types";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { refreshAccessToken } from "@/api/auth";
 import axios from "axios";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
   const [modal, setModal] = useState(false);
-  const token = localStorage.getItem("access_token");
-  const totalAmount = debts?.reduce(
-    (acc, curr) => acc + Number(curr.amount),
-    0
-  );
+  const totalAmount = debts?.reduce((acc, curr) => {
+    if (!curr.is_positive) {
+      return acc + Number(curr.amount);
+    }
+    return acc;
+  }, 0);
 
   const closeModal = () => setModal(false);
 
@@ -29,16 +32,40 @@ export const Debts = () => {
   }, []);
 
   async function getDebts() {
-    if (token) {
-      try {
-        await axios
-          .get(`${import.meta.env.VITE_BASE_URL}/debts/`, {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(token)}`,
-            },
-          })
-          .then((response) => setDebts(response.data));
-      } catch (error) {
+    let accessToken = JSON.parse(
+      localStorage.getItem("access_token") || "null"
+    );
+
+    if (!accessToken) return;
+
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/debts/`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      setDebts(response.data);
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        // ТОКЕН ПРОСРОЧЕН - обновляем
+        try {
+          const newAccessToken = await refreshAccessToken();
+          const retryResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/debts/`,
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+          setDebts(retryResponse.data);
+        } catch (refreshError) {
+          console.error("Failed to refresh token", refreshError);
+        }
+      } else {
         console.error(error);
       }
     }
@@ -49,22 +76,48 @@ export const Debts = () => {
     amount: string;
     description: string;
   }) => {
-    if (token) {
-      if (token) {
+    let accessToken = JSON.parse(
+      localStorage.getItem("access_token") || "null"
+    );
+
+    if (!accessToken) return;
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/debts/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+      alert("Created debt!");
+      closeModal();
+      getDebts();
+    } catch (error: any) {
+      if (error.response?.status === 401) {
         try {
-          await axios
-            .post(`${import.meta.env.VITE_BASE_URL}/debts/`, formData, {
+          const newAccessToken = await refreshAccessToken();
+          const retryResponse = await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/debts/`,
+            formData,
+            {
               headers: {
-                Authorization: `Bearer ${JSON.parse(token)}`,
+                Authorization: `Bearer ${newAccessToken}`,
               },
-            })
-            .then((response) => console.log(response.data));
+            }
+          );
+          console.log(retryResponse.data);
           alert("Created debt!");
           closeModal();
           getDebts();
-        } catch (error) {
-          console.error(error);
+        } catch (refreshError) {
+          console.error("Failed to refresh token", refreshError);
         }
+      } else {
+        console.error(error);
       }
     }
   };
@@ -72,7 +125,10 @@ export const Debts = () => {
   return (
     <div className="w-full">
       <div className="w-full h-fit flex items-center justify-between mb-5">
-        <h2 className="font-bold text-2xl text-center">Debts</h2>
+        <div className="flex items-center gap-x-5">
+          <SidebarTrigger />
+          <h2 className="font-bold text-2xl text-center">Debts</h2>
+        </div>
         <DebtModal modal={modal} onClose={closeModal} submit={handleSubmit} />
         <button
           onClick={() => setModal(true)}
@@ -97,7 +153,7 @@ export const Debts = () => {
             {debts?.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
-                <TableCell>${item.amount}</TableCell>
+                <TableCell>{item.amount} so'm</TableCell>
                 <TableCell className="text-center">
                   {item.description}
                 </TableCell>
@@ -110,7 +166,7 @@ export const Debts = () => {
                         year: "numeric",
                       })}
                     </span>
-                    {"|"}
+                    {" | "}
                     <span>
                       {new Date(item.date).toLocaleTimeString("ru-RU", {
                         hour: "2-digit",
@@ -124,7 +180,8 @@ export const Debts = () => {
                     type="checkbox"
                     name="is_positive"
                     id="is_positive"
-                    checked={item.is_positive ? true : false}
+                    checked={item.is_positive}
+                    readOnly
                   />
                 </TableCell>
               </TableRow>
@@ -132,9 +189,9 @@ export const Debts = () => {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}>Total</TableCell>
+              <TableCell colSpan={4}>Total</TableCell>
               <TableCell className="text-right">
-                ${totalAmount?.toFixed(2)}
+                {totalAmount?.toFixed(2)} so'm
               </TableCell>
             </TableRow>
           </TableFooter>
