@@ -37,7 +37,7 @@ export const SignIn = () => {
       // После успешного логина — навигация
       setTimeout(() => {
         navigate("/"); // Перенаправление на главную страницу
-      }, 1000);
+      }, 2000);
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Error in login!");

@@ -1,12 +1,19 @@
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { AppSidebar } from "./components/layouts/sidebar/AppSidebar";
 import { SidebarProvider } from "./components/ui/sidebar";
 import { useAuth } from "@/context/AuthContext";
+import { useEffect } from "react";
 
 function App() {
   const { accessToken, isLoading } = useAuth();
+  const navigate = useNavigate();
 
-  // Показываем "Loading..." если данные загружаются
+  useEffect(() => {
+    if (isLoading && accessToken === null) {
+      navigate("/login");
+    }
+  }, [isLoading, accessToken, navigate]);
+
   if (isLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -14,13 +21,6 @@ function App() {
       </div>
     );
   }
-
-  // Если нет токена, редиректим на страницу входа
-  setTimeout(() => {
-    if (!accessToken) {
-      return <Navigate to="/login" />;
-    }
-  }, 1000);
 
   return (
     <SidebarProvider>
