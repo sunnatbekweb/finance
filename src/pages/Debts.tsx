@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { DebtModal } from "@/components/ui/modal/DebtModal";
 import {
   Table,
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/table";
 import { DebtsList } from "@/types";
 import axios from "axios";
-import { useEffect, useState } from "react";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
@@ -70,9 +70,9 @@ export const Debts = () => {
   };
 
   return (
-    <div className="p-10">
+    <div className="w-full p-10">
       <div className="w-full h-fit flex items-center justify-between mb-5">
-        <h2 className="font-bold text-2xl text-center">Transactions</h2>
+        <h2 className="font-bold text-2xl text-center">Debts</h2>
         <DebtModal modal={modal} onClose={closeModal} submit={handleSubmit} />
         <button
           onClick={() => setModal(true)}
@@ -83,13 +83,13 @@ export const Debts = () => {
       </div>
       <div>
         <Table>
-          <TableCaption>A list of transactions.</TableCaption>
+          <TableCaption>A list of debts.</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Amount</TableHead>
               <TableHead className="text-center">Description</TableHead>
               <TableHead className="text-right">Date</TableHead>
-              <TableHead className="text-right">Date</TableHead>{" "}
+              <TableHead className="text-right">Is positive</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
