@@ -1,26 +1,33 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { AppSidebar } from "./components/layouts/sidebar/AppSidebar";
 import { SidebarProvider } from "./components/ui/sidebar";
-import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
+import axios from "axios";
 
 function App() {
-  const { accessToken, isLoading } = useAuth();
   const navigate = useNavigate();
+  const rawRefreshToken = localStorage.getItem("refresh_token");
+  const refreshToken = rawRefreshToken ? JSON.parse(rawRefreshToken) : null;
 
   useEffect(() => {
-    if (isLoading && accessToken === null) {
+    if (!refreshToken) {
       navigate("/login");
+    } else {
+      axios
+        .post(`${import.meta.env.VITE_BASE_URL}/token/refresh/`, {
+          refresh: refreshToken,
+        })
+        .then((response) => {
+          localStorage.setItem(
+            "access_token",
+            JSON.stringify(response.data.access)
+          );
+        })
+        .catch(() => {
+          navigate("/login");
+        });
     }
-  }, [isLoading, accessToken, navigate]);
-
-  if (isLoading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        Loading...
-      </div>
-    );
-  }
+  }, [navigate, refreshToken]);
 
   return (
     <SidebarProvider>

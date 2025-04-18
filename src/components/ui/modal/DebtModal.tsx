@@ -42,7 +42,7 @@ export const DebtModal: React.FC<DebtModalProps> = ({
           modal
             ? "visible opacity-100 scale-100"
             : "collapse opacity-0 scale-50"
-        } fixed top-1/2 left-1/2 -translate-1/2 rounded-md bg-white p-10 w-1/2 flex flex-col gap-y-5 mx-auto z-20 duration-300`}
+        } fixed top-1/2 left-1/2 -translate-1/2 rounded-md bg-white px-5 py-8 md:p-10 w-[90%] sm:w-[80%] md:w-1/2 flex flex-col gap-y-5 mx-auto z-20 duration-300`}
         onSubmit={handleSubmit}
       >
         <label htmlFor="is_positive" className="flex flex-col gap-y-2">
