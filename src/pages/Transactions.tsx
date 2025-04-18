@@ -25,6 +25,13 @@ export const Transactions = () => {
     return acc;
   }, 0);
 
+  const totalConsumption = transactions?.reduce((acc, curr) => {
+    if (curr.transaction_type === "expense") {
+      return acc + Number(curr.amount);
+    }
+    return acc;
+  }, 0);
+
   const closeModal = () => setModal(false);
 
   useEffect(() => {
@@ -67,7 +74,6 @@ export const Transactions = () => {
       }
     }
   }
-
   const handleSubmit = async (formData: {
     transaction_type: string;
     amount: string;
@@ -182,9 +188,15 @@ export const Transactions = () => {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}>Total</TableCell>
+              <TableCell colSpan={3}>Поступление</TableCell>
               <TableCell className="text-right">
                 {totalAmount?.toFixed(2)} so'm
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={3}>Расход</TableCell>
+              <TableCell className="text-right">
+                {totalConsumption?.toFixed(2)} so'm
               </TableCell>
             </TableRow>
           </TableFooter>
