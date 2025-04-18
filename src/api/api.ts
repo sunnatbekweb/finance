@@ -1,6 +1,5 @@
 import axios from "axios";
 import { refreshAccessToken } from "@/api/auth";
-import { useAuth } from "@/context/AuthContext";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -24,7 +23,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    const { logout } = useAuth();
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
@@ -52,7 +50,6 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        logout();
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
