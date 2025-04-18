@@ -18,11 +18,19 @@ import axios from "axios";
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
   const [modal, setModal] = useState(false);
-  const totalAmount = debts?.reduce(
-    (acc, curr) => curr.is_positive ? acc - Number(curr.amount) : acc + Number(curr.amount),
-    0
-  );
-  
+  const totalRepaid = debts?.reduce((acc, curr) => {
+    if (curr.is_positive) {
+      return acc + Number(curr.amount);
+    }
+    return acc;
+  }, 0);
+  const totalOutstanding = debts?.reduce((acc, curr) => {
+    if (!curr.is_positive) {
+      return acc + Number(curr.amount);
+    }
+    return acc;
+  }, 0);
+
   const closeModal = () => setModal(false);
 
   useEffect(() => {
@@ -187,9 +195,15 @@ export const Debts = () => {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={4}>Total</TableCell>
+              <TableCell colSpan={4}>Погашено</TableCell>
               <TableCell className="text-right">
-                {totalAmount?.toFixed(2)} so'm
+                {totalRepaid?.toFixed(2)} so'm
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={4}>Не погашено</TableCell>
+              <TableCell className="text-right">
+                {totalOutstanding?.toFixed(2)} so'm
               </TableCell>
             </TableRow>
           </TableFooter>
