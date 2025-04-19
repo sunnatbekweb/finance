@@ -14,7 +14,7 @@ export const refreshAccessToken = async (): Promise<string> => {
     { refresh: refreshToken }
   );
 
-  const { access } = response.data;
+  const { access } = response.data.access;
   localStorage.setItem("access_token", JSON.stringify(access));
 
   return access;
