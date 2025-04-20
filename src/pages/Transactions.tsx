@@ -14,6 +14,7 @@ import { TransactionsList } from "@/types";
 import { TransactionModal } from "@/components/ui/modal/TransactionModal";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { refreshAccessToken } from "@/api/auth";
+import { toast, ToastContainer } from "react-toastify";
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<TransactionsList>();
@@ -24,13 +25,13 @@ export const Transactions = () => {
     }
     return acc;
   }, 0);
-
   const totalConsumption = transactions?.reduce((acc, curr) => {
     if (curr.transaction_type === "expense") {
       return acc + Number(curr.amount);
     }
     return acc;
   }, 0);
+  const [loadingId, setLoadingId] = useState<number | null>(null);
 
   const closeModal = () => setModal(false);
 
@@ -120,13 +121,40 @@ export const Transactions = () => {
       }
     }
   };
+  const handleDelete = async (id: number) => {
+    const token = JSON.parse(localStorage.getItem("access_token") || "null");
+
+    if (!token) return;
+
+    try {
+      setLoadingId(id); // <- ставим ID элемента, который сейчас грузится
+      await axios.delete(
+        `${import.meta.env.VITE_BASE_URL}/transactions/${id}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      getTransactions();
+      toast.success("Deleted transaction!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error when deleting!");
+    } finally {
+      setLoadingId(null); // <- сбрасываем после завершения
+    }
+  };
 
   return (
     <div className="w-full flex flex-col">
       <div className="w-full h-fit flex items-center justify-between mb-5">
         <div className="flex items-center gap-x-5">
           <SidebarTrigger />
-          <h2 className="font-bold text-2xl text-center">Transactions</h2>
+          <h2 className="font-bold text-base sm:text-lg md:text-2xl text-center">
+            Transactions
+          </h2>
         </div>
         <TransactionModal
           modal={modal}
@@ -140,6 +168,7 @@ export const Transactions = () => {
           Add transaction
         </button>
       </div>
+      <ToastContainer />
       <div>
         <Table>
           <TableCaption>A list of transactions.</TableCaption>
@@ -149,6 +178,7 @@ export const Transactions = () => {
               <TableHead>Amount</TableHead>
               <TableHead className="text-center">Description</TableHead>
               <TableHead className="text-right">Date</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -183,20 +213,29 @@ export const Transactions = () => {
                     </span>
                   </div>
                 </TableCell>
+                <TableCell className="text-right flex gap-x-3.5 justify-end">
+                  <button className="edit_button">Edit</button>
+                  <button
+                    className="delete_button"
+                    onClick={() => handleDelete(transaction.id)}
+                  >
+                    {loadingId === transaction.id ? "Loading..." : "Delete"}
+                  </button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}>Поступление</TableCell>
-              <TableCell className="text-right">
-                {totalAmount?.toFixed(2)} so'm
+              <TableCell colSpan={4}>Поступление</TableCell>
+              <TableCell className="text-right text-green-500">
+                +{totalAmount?.toFixed(2)} so'm
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell colSpan={3}>Расход</TableCell>
-              <TableCell className="text-right">
-                {totalConsumption?.toFixed(2)} so'm
+              <TableCell colSpan={4}>Расход</TableCell>
+              <TableCell className="text-right text-red-500">
+                -{totalConsumption?.toFixed(2)} so'm
               </TableCell>
             </TableRow>
           </TableFooter>
