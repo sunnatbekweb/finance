@@ -51,7 +51,9 @@ button {
   font-family: "Poppins", sans-serif;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   padding: 6px 8px;
   border: 1px solid #f8c023;
   border-radius: 4px;
@@ -142,13 +144,28 @@ input, textarea, select {
   }
 }
 
+.edit_button {
+  padding: 6px;
+  border-radius: 6px;
+  color: #ffffff;
+  background: #f8c023;
+}
+
+.delete_button {
+  padding: 6px;
+  border-radius: 6px;
+  color: #ffffff;
+  background: #ff0000;
+}
 
 @media screen and (min-width: 768px) {
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     padding: 8px 16px;
     border: 1px solid #f8c023;
     border-radius: 4px;
-  
+
     &:focus {
       outline-color: #f8c023;
     }
