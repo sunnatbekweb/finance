@@ -14,7 +14,7 @@ import { TransactionsList } from "@/types";
 import { TransactionModal } from "@/components/ui/modal/TransactionModal";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { refreshAccessToken } from "@/api/auth";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<TransactionsList>();
@@ -31,6 +31,7 @@ export const Transactions = () => {
     }
     return acc;
   }, 0);
+  const [loadingId, setLoadingId] = useState<number | null>(null);
 
   const closeModal = () => setModal(false);
 
@@ -121,11 +122,12 @@ export const Transactions = () => {
     }
   };
   const handleDelete = async (id: number) => {
-    let token = JSON.parse(localStorage.getItem("access_token") || "null");
+    const token = JSON.parse(localStorage.getItem("access_token") || "null");
 
     if (!token) return;
 
     try {
+      setLoadingId(id); // <- ставим ID элемента, который сейчас грузится
       await axios.delete(
         `${import.meta.env.VITE_BASE_URL}/transactions/${id}/`,
         {
@@ -140,6 +142,8 @@ export const Transactions = () => {
     } catch (error) {
       console.error(error);
       toast.error("Error when deleting!");
+    } finally {
+      setLoadingId(null); // <- сбрасываем после завершения
     }
   };
 
@@ -164,6 +168,7 @@ export const Transactions = () => {
           Add transaction
         </button>
       </div>
+      <ToastContainer />
       <div>
         <Table>
           <TableCaption>A list of transactions.</TableCaption>
@@ -214,7 +219,7 @@ export const Transactions = () => {
                     className="delete_button"
                     onClick={() => handleDelete(transaction.id)}
                   >
-                    Delete
+                    {loadingId === transaction.id ? "Loading..." : "Delete"}
                   </button>
                 </TableCell>
               </TableRow>
