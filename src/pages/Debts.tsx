@@ -13,8 +13,10 @@ import {
 import { DebtsList } from "@/types";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Delete, Edit } from "lucide-react";
+import { Loader } from "@/components/ui/loader/Loader";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
@@ -80,11 +82,11 @@ export const Debts = () => {
         }
       );
       console.log(response.data);
-      alert("Created debt!");
+      toast.success("Created debt!");
       closeModal();
       getDebts();
     } catch (error: any) {
-      console.error(error);
+      toast.error(`Error creating debt: ${error.message}`);
     }
   };
   const handleDelete = async (id: number) => {
@@ -124,12 +126,14 @@ export const Debts = () => {
           },
         }
       );
-      // После успешного обновления заново получаем данные
       getDebts();
     } catch (error) {
       console.error(error);
     }
   };
+  function formatNumberWithSpaces(number: number | string) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  }
 
   return (
     <div className="w-full">
@@ -146,6 +150,7 @@ export const Debts = () => {
           Add debt
         </button>
       </div>
+      <ToastContainer />
       <div>
         <Table>
           <TableCaption>A list of debts.</TableCaption>
@@ -162,7 +167,7 @@ export const Debts = () => {
             {debts?.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
-                <TableCell>{item.amount} so'm</TableCell>
+                <TableCell>{formatNumberWithSpaces(item.amount ?? 0)} so'm</TableCell>
                 <TableCell className="text-center">
                   {item.description}
                 </TableCell>
@@ -201,12 +206,14 @@ export const Debts = () => {
                 </TableCell>
                 <TableCell className="text-right">
                   <TableCell className="text-right flex gap-x-3.5 justify-end">
-                    <button className="edit_button">Edit</button>
+                    <button className="edit_button">
+                      <Edit />
+                    </button>
                     <button
                       className="delete_button"
                       onClick={() => handleDelete(item.id)}
                     >
-                      {loadingId === item.id ? "Loading..." : "Delete"}
+                      {loadingId === item.id ? <Loader /> : <Delete />}
                     </button>
                   </TableCell>
                 </TableCell>
@@ -217,13 +224,13 @@ export const Debts = () => {
             <TableRow>
               <TableCell colSpan={5}>Погашено</TableCell>
               <TableCell className="text-right text-green-500">
-                {totalRepaid?.toFixed(2)} so'm
+                {formatNumberWithSpaces(totalRepaid ?? 0)} so'm
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell colSpan={5}>Не погашено</TableCell>
               <TableCell className="text-right text-red-500">
-                {totalOutstanding?.toFixed(2)} so'm
+                {formatNumberWithSpaces(totalOutstanding ?? 0)} so'm
               </TableCell>
             </TableRow>
           </TableFooter>
