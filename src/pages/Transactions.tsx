@@ -34,12 +34,11 @@ export const Transactions = () => {
   }, 0);
   const [loadingId, setLoadingId] = useState<number | null>(null);
 
-  const closeModal = () => setModal(false);
-
   useEffect(() => {
     getTransactions();
   }, []);
 
+  const closeModal = () => setModal(false);
   async function getTransactions() {
     let token = JSON.parse(localStorage.getItem("access_token") || "null");
 
@@ -78,11 +77,11 @@ export const Transactions = () => {
           },
         }
       );
-      alert("Created transaction!");
+      toast.success("Created transaction!");
       closeModal();
       getTransactions();
     } catch (error: any) {
-      console.error(error);
+      toast.error(`Error creating debt: ${error.message}`);
     }
   };
   const handleDelete = async (id: number) => {
@@ -100,16 +99,17 @@ export const Transactions = () => {
           },
         }
       );
-
       getTransactions();
       toast.success("Deleted transaction!");
     } catch (error) {
-      console.error(error);
-      toast.error("Error when deleting!");
+      toast.error("Error deleting transaction!");
     } finally {
       setLoadingId(null);
     }
   };
+  function formatNumberWithSpaces(number: number | string) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  }
 
   return (
     <div className="w-full flex flex-col">
@@ -151,7 +151,7 @@ export const Transactions = () => {
                 <TableCell>{transaction.id}</TableCell>
                 <TableCell>
                   {transaction.transaction_type === "income" ? "+" : "-"}
-                  {transaction.amount} so'm
+                  {formatNumberWithSpaces(transaction.amount)} so'm
                 </TableCell>
                 <TableCell className="text-center">
                   {transaction.description}
@@ -195,13 +195,13 @@ export const Transactions = () => {
             <TableRow>
               <TableCell colSpan={4}>Поступление</TableCell>
               <TableCell className="text-right text-green-500">
-                +{totalAmount?.toFixed(2)} so'm
+                +{formatNumberWithSpaces(totalAmount ?? 0)} so'm
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell colSpan={4}>Расход</TableCell>
               <TableCell className="text-right text-red-500">
-                -{totalConsumption?.toFixed(2)} so'm
+                -{formatNumberWithSpaces(totalConsumption ?? 0)} so'm
               </TableCell>
             </TableRow>
           </TableFooter>
