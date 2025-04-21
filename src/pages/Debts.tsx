@@ -13,8 +13,10 @@ import {
 import { DebtsList } from "@/types";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Delete, Edit } from "lucide-react";
+import { Loader } from "@/components/ui/loader/Loader";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
@@ -80,11 +82,11 @@ export const Debts = () => {
         }
       );
       console.log(response.data);
-      alert("Created debt!");
+      toast.success("Created debt!");
       closeModal();
       getDebts();
     } catch (error: any) {
-      console.error(error);
+      toast.error(`Error creating debt: ${error.message}`);
     }
   };
   const handleDelete = async (id: number) => {
@@ -145,6 +147,7 @@ export const Debts = () => {
           Add debt
         </button>
       </div>
+      <ToastContainer />
       <div>
         <Table>
           <TableCaption>A list of debts.</TableCaption>
@@ -200,12 +203,14 @@ export const Debts = () => {
                 </TableCell>
                 <TableCell className="text-right">
                   <TableCell className="text-right flex gap-x-3.5 justify-end">
-                    <button className="edit_button">Edit</button>
+                    <button className="edit_button">
+                      <Edit />
+                    </button>
                     <button
                       className="delete_button"
                       onClick={() => handleDelete(item.id)}
                     >
-                      {loadingId === item.id ? "Loading..." : "Delete"}
+                      {loadingId === item.id ? <Loader /> : <Delete />}
                     </button>
                   </TableCell>
                 </TableCell>
