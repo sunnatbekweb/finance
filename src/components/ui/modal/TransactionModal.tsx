@@ -66,7 +66,7 @@ export const TransactionModal: React.FC<ModalProps> = ({
         <label htmlFor="amount" className="flex flex-col gap-y-2">
           <span>Amount</span>
           <input
-            type="text"
+            type="number"
             name="amount"
             id="amount"
             onChange={handleChange}
