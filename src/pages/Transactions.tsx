@@ -14,6 +14,8 @@ import { TransactionsList } from "@/types";
 import { TransactionModal } from "@/components/ui/modal/TransactionModal";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { toast, ToastContainer } from "react-toastify";
+import { Delete, Edit } from "lucide-react";
+import { Loader } from "@/components/ui/loader/Loader";
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<TransactionsList>();
@@ -89,7 +91,7 @@ export const Transactions = () => {
     if (!token) return;
 
     try {
-      setLoadingId(id); // <- ставим ID элемента, который сейчас грузится
+      setLoadingId(id);
       await axios.delete(
         `${import.meta.env.VITE_BASE_URL}/transactions/${id}/`,
         {
@@ -105,7 +107,7 @@ export const Transactions = () => {
       console.error(error);
       toast.error("Error when deleting!");
     } finally {
-      setLoadingId(null); // <- сбрасываем после завершения
+      setLoadingId(null);
     }
   };
 
@@ -176,12 +178,14 @@ export const Transactions = () => {
                   </div>
                 </TableCell>
                 <TableCell className="text-right flex gap-x-3.5 justify-end">
-                  <button className="edit_button">Edit</button>
+                  <button className="edit_button">
+                    <Edit />
+                  </button>
                   <button
                     className="delete_button"
                     onClick={() => handleDelete(transaction.id)}
                   >
-                    {loadingId === transaction.id ? "Loading..." : "Delete"}
+                    {loadingId === transaction.id ? <Loader /> : <Delete />}
                   </button>
                 </TableCell>
               </TableRow>

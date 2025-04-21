@@ -152,6 +152,10 @@ select {
 }
 
 .delete_button {
+  min-width: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 6px;
   border-radius: 6px;
   color: #ffffff;

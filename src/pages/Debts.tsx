@@ -124,7 +124,6 @@ export const Debts = () => {
           },
         }
       );
-      // После успешного обновления заново получаем данные
       getDebts();
     } catch (error) {
       console.error(error);
