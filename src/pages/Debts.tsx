@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/table";
 import { DebtsList } from "@/types";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { refreshAccessToken } from "@/api/auth";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
@@ -30,13 +31,12 @@ export const Debts = () => {
     }
     return acc;
   }, 0);
-
-  const closeModal = () => setModal(false);
+  const [loadingId, setLoadingId] = useState<number | null>(null);
 
   useEffect(() => {
     getDebts();
   }, []);
-
+  const closeModal = () => setModal(false);
   async function getDebts() {
     let accessToken = JSON.parse(
       localStorage.getItem("access_token") || "null"
@@ -55,28 +55,9 @@ export const Debts = () => {
       );
       setDebts(response.data);
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        // ТОКЕН ПРОСРОЧЕН - обновляем
-        try {
-          const newAccessToken = await refreshAccessToken();
-          const retryResponse = await axios.get(
-            `${import.meta.env.VITE_BASE_URL}/debts/`,
-            {
-              headers: {
-                Authorization: `Bearer ${newAccessToken}`,
-              },
-            }
-          );
-          setDebts(retryResponse.data);
-        } catch (refreshError) {
-          console.error("Failed to refresh token", refreshError);
-        }
-      } else {
-        console.error(error);
-      }
+      console.error(error);
     }
   }
-
   const handleSubmit = async (formData: {
     is_positive: string;
     amount: string;
@@ -103,28 +84,50 @@ export const Debts = () => {
       closeModal();
       getDebts();
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        try {
-          const newAccessToken = await refreshAccessToken();
-          const retryResponse = await axios.post(
-            `${import.meta.env.VITE_BASE_URL}/debts/`,
-            formData,
-            {
-              headers: {
-                Authorization: `Bearer ${newAccessToken}`,
-              },
-            }
-          );
-          console.log(retryResponse.data);
-          alert("Created debt!");
-          closeModal();
-          getDebts();
-        } catch (refreshError) {
-          console.error("Failed to refresh token", refreshError);
+      console.error(error);
+    }
+  };
+  const handleDelete = async (id: number) => {
+    const token = JSON.parse(localStorage.getItem("access_token") || "null");
+
+    if (!token) return;
+
+    try {
+      setLoadingId(id);
+      await axios.delete(`${import.meta.env.VITE_BASE_URL}/debts/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      getDebts();
+      toast.success("Deleted transaction!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error when deleting!");
+    } finally {
+      setLoadingId(null);
+    }
+  };
+  const handlePatch = async (id: number, is_positive: boolean) => {
+    const token = JSON.parse(localStorage.getItem("access_token") || "null");
+
+    if (!token) return;
+
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/debts/${id}/`,
+        { is_positive },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      } else {
-        console.error(error);
-      }
+      );
+      // После успешного обновления заново получаем данные
+      getDebts();
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -182,27 +185,44 @@ export const Debts = () => {
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  <input
-                    type="checkbox"
-                    name="is_positive"
-                    id="is_positive"
-                    checked={item.is_positive}
-                    readOnly
-                  />
+                  <div
+                    role="button"
+                    onClick={() => handlePatch(item.id, !item.is_positive)}
+                    className="flex items-center justify-end space-x-2"
+                  >
+                    <Checkbox id={String(item.id)} checked={item.is_positive} />
+                    <label
+                      htmlFor={String(item.id)}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Returned
+                    </label>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right">
+                  <TableCell className="text-right flex gap-x-3.5 justify-end">
+                    <button className="edit_button">Edit</button>
+                    <button
+                      className="delete_button"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      {loadingId === item.id ? "Loading..." : "Delete"}
+                    </button>
+                  </TableCell>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={4}>Погашено</TableCell>
-              <TableCell className="text-right">
+              <TableCell colSpan={5}>Погашено</TableCell>
+              <TableCell className="text-right text-green-500">
                 {totalRepaid?.toFixed(2)} so'm
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell colSpan={4}>Не погашено</TableCell>
-              <TableCell className="text-right">
+              <TableCell colSpan={5}>Не погашено</TableCell>
+              <TableCell className="text-right text-red-500">
                 {totalOutstanding?.toFixed(2)} so'm
               </TableCell>
             </TableRow>
