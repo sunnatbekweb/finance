@@ -131,6 +131,9 @@ export const Debts = () => {
       console.error(error);
     }
   };
+  function formatNumberWithSpaces(number: number | string) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  }
 
   return (
     <div className="w-full">
@@ -164,7 +167,7 @@ export const Debts = () => {
             {debts?.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
-                <TableCell>{item.amount} so'm</TableCell>
+                <TableCell>{formatNumberWithSpaces(item.amount ?? 0)} so'm</TableCell>
                 <TableCell className="text-center">
                   {item.description}
                 </TableCell>
@@ -221,13 +224,13 @@ export const Debts = () => {
             <TableRow>
               <TableCell colSpan={5}>Погашено</TableCell>
               <TableCell className="text-right text-green-500">
-                {totalRepaid?.toFixed(2)} so'm
+                {formatNumberWithSpaces(totalRepaid ?? 0)} so'm
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell colSpan={5}>Не погашено</TableCell>
               <TableCell className="text-right text-red-500">
-                {totalOutstanding?.toFixed(2)} so'm
+                {formatNumberWithSpaces(totalOutstanding ?? 0)} so'm
               </TableCell>
             </TableRow>
           </TableFooter>
