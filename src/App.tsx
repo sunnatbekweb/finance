@@ -14,7 +14,7 @@ function App() {
       navigate("/login");
     } else {
       axios
-        .post(`${import.meta.env.VITE_BASE_URL}/token/refresh/`, {
+        .post(`${import.meta.env.VITE_BASE_URL}/api/token/refresh/`, {
           refresh: refreshToken,
         })
         .then((response) => {

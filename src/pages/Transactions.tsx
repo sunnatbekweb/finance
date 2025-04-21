@@ -13,7 +13,6 @@ import {
 import { TransactionsList } from "@/types";
 import { TransactionModal } from "@/components/ui/modal/TransactionModal";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { refreshAccessToken } from "@/api/auth";
 import { toast, ToastContainer } from "react-toastify";
 
 export const Transactions = () => {
@@ -55,24 +54,7 @@ export const Transactions = () => {
       );
       setTransactions(response.data);
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        try {
-          const newAccessToken = await refreshAccessToken();
-          const retryResponse = await axios.get(
-            `${import.meta.env.VITE_BASE_URL}/transactions/`,
-            {
-              headers: {
-                Authorization: `Bearer ${newAccessToken}`,
-              },
-            }
-          );
-          setTransactions(retryResponse.data);
-        } catch (refreshError) {
-          console.error("Failed to refresh token", refreshError);
-        }
-      } else {
-        console.error(error);
-      }
+      console.error(error);
     }
   }
   const handleSubmit = async (formData: {
@@ -98,27 +80,7 @@ export const Transactions = () => {
       closeModal();
       getTransactions();
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        try {
-          const newAccessToken = await refreshAccessToken();
-          await axios.post(
-            `${import.meta.env.VITE_BASE_URL}/transactions/`,
-            formData,
-            {
-              headers: {
-                Authorization: `Bearer ${newAccessToken}`,
-              },
-            }
-          );
-          alert("Created transaction!");
-          closeModal();
-          getTransactions();
-        } catch (refreshError) {
-          console.error("Failed to refresh token", refreshError);
-        }
-      } else {
-        console.error(error);
-      }
+      console.error(error);
     }
   };
   const handleDelete = async (id: number) => {
