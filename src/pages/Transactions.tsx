@@ -16,23 +16,13 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { toast, ToastContainer } from "react-toastify";
 import { Delete, Edit } from "lucide-react";
 import { Loader } from "@/components/ui/loader/Loader";
-import { formatNumberWithSpaces } from "@/hooks/number-formatter";
+import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
+import { useTransactionTotals } from "@/hooks/useTotals";
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<TransactionsList>();
   const [modal, setModal] = useState(false);
-  const totalAmount = transactions?.reduce((acc, curr) => {
-    if (curr.transaction_type === "income") {
-      return acc + Number(curr.amount);
-    }
-    return acc;
-  }, 0);
-  const totalConsumption = transactions?.reduce((acc, curr) => {
-    if (curr.transaction_type === "expense") {
-      return acc + Number(curr.amount);
-    }
-    return acc;
-  }, 0);
+  const { totalIncome, totalExpense } = useTransactionTotals(transactions);
   const [loadingId, setLoadingId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -193,13 +183,13 @@ export const Transactions = () => {
             <TableRow>
               <TableCell colSpan={4}>Поступление</TableCell>
               <TableCell className="text-right text-green-500">
-                +{formatNumberWithSpaces(totalAmount ?? 0)} so'm
+                +{formatNumberWithSpaces(totalIncome ?? 0)} so'm
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell colSpan={4}>Расход</TableCell>
               <TableCell className="text-right text-red-500">
-                -{formatNumberWithSpaces(totalConsumption ?? 0)} so'm
+                -{formatNumberWithSpaces(totalExpense ?? 0)} so'm
               </TableCell>
             </TableRow>
           </TableFooter>

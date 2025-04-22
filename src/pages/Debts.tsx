@@ -17,23 +17,13 @@ import { toast, ToastContainer } from "react-toastify";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Delete, Edit } from "lucide-react";
 import { Loader } from "@/components/ui/loader/Loader";
-import { formatNumberWithSpaces } from "@/hooks/number-formatter";
+import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
+import { useDebtTotals } from "@/hooks/useTotals";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
   const [modal, setModal] = useState(false);
-  const totalRepaid = debts?.reduce((acc, curr) => {
-    if (curr.is_positive) {
-      return acc + Number(curr.amount);
-    }
-    return acc;
-  }, 0);
-  const totalOutstanding = debts?.reduce((acc, curr) => {
-    if (!curr.is_positive) {
-      return acc + Number(curr.amount);
-    }
-    return acc;
-  }, 0);
+  const { totalRepaid, totalOutstanding } = useDebtTotals(debts);
   const [loadingId, setLoadingId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -165,7 +155,9 @@ export const Debts = () => {
             {debts?.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
-                <TableCell>{formatNumberWithSpaces(item.amount ?? 0)} so'm</TableCell>
+                <TableCell>
+                  {formatNumberWithSpaces(item.amount ?? 0)} so'm
+                </TableCell>
                 <TableCell className="text-center">
                   {item.description}
                 </TableCell>
