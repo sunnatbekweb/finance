@@ -17,6 +17,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Delete, Edit } from "lucide-react";
 import { Loader } from "@/components/ui/loader/Loader";
+import { formatNumberWithSpaces } from "@/hooks/number-formatter";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
@@ -131,9 +132,6 @@ export const Debts = () => {
       console.error(error);
     }
   };
-  function formatNumberWithSpaces(number: number | string) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-  }
 
   return (
     <div className="w-full">
