@@ -56,8 +56,8 @@ export const DebtModal: React.FC<DebtModalProps> = ({
             <option value="" disabled>
               Slect positive
             </option>
-            <option value="true">True</option>
-            <option value="false">False</option>
+            <option value="true">Qarz to'landi</option>
+            <option value="false">Qarz olindi</option>
           </select>
         </label>
         <label htmlFor="amount" className="flex flex-col gap-y-2">

@@ -76,7 +76,9 @@ export const Transactions = () => {
       closeModal();
       getTransactions();
     } catch (error: any) {
-      toast.error(`Error creating debt: ${error.message}`);
+      toast.error(
+        `Error creating debt: ${error?.response?.statusText || "Unknown error"}`
+      );
     }
   };
   const handleDelete = async (id: number) => {
@@ -96,8 +98,12 @@ export const Transactions = () => {
       );
       getTransactions();
       toast.success("Deleted transaction!");
-    } catch (error) {
-      toast.error("Error deleting transaction!");
+    } catch (error: any) {
+      toast.error(
+        `Error deleting transaction! ${
+          error?.response?.statusText || "Unknown error"
+        }`
+      );
     } finally {
       setLoadingId(null);
     }
@@ -125,7 +131,11 @@ export const Transactions = () => {
       closeModal();
       getTransactions();
     } catch (error: any) {
-      toast.error(`Error editing Transactopn: ${error.message}`);
+      toast.error(
+        `Error editing transaction: ${
+          error?.response?.statusText || "Unknown error"
+        }`
+      );
     }
   };
 

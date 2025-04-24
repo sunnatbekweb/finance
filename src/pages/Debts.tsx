@@ -81,7 +81,9 @@ export const Debts = () => {
       closeModal();
       getDebts();
     } catch (error: any) {
-      toast.error(`Error creating debt: ${error.message}`);
+      toast.error(
+        `Error creating debt: ${error?.response?.statusText || "Unknown error"}`
+      );
     }
   };
   const handleDelete = async (id: number) => {
@@ -99,9 +101,10 @@ export const Debts = () => {
 
       getDebts();
       toast.success("Deleted transaction!");
-    } catch (error) {
-      console.error(error);
-      toast.error("Error when deleting!");
+    } catch (error: any) {
+      toast.error(
+        `Error deleting debt: ${error?.response?.statusText || "Unknown error"}`
+      );
     } finally {
       setLoadingId(null);
     }
@@ -122,8 +125,8 @@ export const Debts = () => {
         }
       );
       getDebts();
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.error(`${error?.response?.statusText || "Unknown error"}`);
     }
   };
   const handleEdit = async (formData: {
@@ -149,7 +152,7 @@ export const Debts = () => {
       closeModal();
       getDebts();
     } catch (error: any) {
-      toast.error(`Error editing debt: ${error.message}`);
+      toast.error(`Error editing debt: ${error?.response?.statusText || "Unknown error"}`);
     }
   };
 

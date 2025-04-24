@@ -32,17 +32,15 @@ export const SignIn = () => {
         "refresh_token",
         JSON.stringify(response.data.refresh)
       );
-
       toast.success("Successfully logined!");
-      // После успешного логина — навигация
       setTimeout(() => {
-        navigate("/"); // Перенаправление на главную страницу
+        navigate("/");
       }, 2000);
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error("Error in login!");
+    } catch (error: any) {
+      toast.error(
+        `Error in login! ${error?.response?.statusText || "Unknown error"}`
+      );
     } finally {
-      // Очистка полей формы
       setFormData({
         username: "",
         password: "",

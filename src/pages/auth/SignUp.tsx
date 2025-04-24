@@ -30,9 +30,13 @@ export const SignUp = () => {
       setTimeout(() => {
         navigate("/login");
       }, 500);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Error creating account!");
+      toast.error(
+        `Error creating account! ${
+          error?.response?.statusText || "Unknown error"
+        }`
+      );
     } finally {
       setFormData({
         username: "",
@@ -56,7 +60,10 @@ export const SignUp = () => {
         </h3>
         <ToastContainer />
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-y-3 md:gap-y-6 mb-6 md:mb-10">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-y-3 md:gap-y-6 mb-6 md:mb-10"
+        >
           <label htmlFor="username" className="flex flex-col gap-y-2">
             <span className="text-sm md:text-base">User name</span>
             <input
@@ -128,7 +135,7 @@ export const SignUp = () => {
         </form>
         <p className="text-center text-gray-400">
           Already have an account{" "}
-          <Link to={"/signin"} className="font-semibold text-[#f8c023]">
+          <Link to={"/login"} className="font-semibold text-[#f8c023]">
             Sign in here
           </Link>
         </p>
