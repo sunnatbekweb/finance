@@ -18,18 +18,22 @@ import { Delete, Edit } from "lucide-react";
 import { Loader } from "@/components/ui/loader/Loader";
 import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
 import { useTransactionTotals } from "@/hooks/useTotals";
+import { EditTransactions } from "@/components/ui/modal/EditTransactions";
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<TransactionsList>();
   const [modal, setModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const { totalIncome, totalExpense } = useTransactionTotals(transactions);
   const [loadingId, setLoadingId] = useState<number | null>(null);
+  const [transactionId, setTranactionId] = useState<number | null>(null);
 
   useEffect(() => {
     getTransactions();
   }, []);
 
   const closeModal = () => setModal(false);
+  const closeEditModal = () => setEditModal(false);
   async function getTransactions() {
     let token = JSON.parse(localStorage.getItem("access_token") || "null");
 
@@ -98,6 +102,32 @@ export const Transactions = () => {
       setLoadingId(null);
     }
   };
+  const handleEdit = async (formData: {
+    transaction_type: string;
+    amount: string;
+    description: string;
+  }) => {
+    let token = JSON.parse(localStorage.getItem("access_token") || "null");
+
+    if (!token) return;
+
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_BASE_URL}/transactions/${transactionId}/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success("Edited transaction!");
+      closeModal();
+      getTransactions();
+    } catch (error: any) {
+      toast.error(`Error editing Transactopn: ${error.message}`);
+    }
+  };
 
   return (
     <div className="w-full flex flex-col">
@@ -121,6 +151,12 @@ export const Transactions = () => {
         </button>
       </div>
       <ToastContainer />
+      <EditTransactions
+        id={transactionId}
+        modal={editModal}
+        onClose={closeEditModal}
+        submit={handleEdit}
+      />
       <div>
         <Table>
           <TableCaption>A list of transactions.</TableCaption>
@@ -166,7 +202,12 @@ export const Transactions = () => {
                   </div>
                 </TableCell>
                 <TableCell className="text-right flex gap-x-3.5 justify-end">
-                  <button className="edit_button">
+                  <button
+                    className="edit_button"
+                    onClick={() => {
+                      setTranactionId(transaction.id), setEditModal(true);
+                    }}
+                  >
                     <Edit />
                   </button>
                   <button
