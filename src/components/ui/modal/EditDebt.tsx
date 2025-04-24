@@ -1,18 +1,36 @@
-import { EditTransactionProps } from "@/types";
+import { EditDebtProps } from "@/types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export const EditTransactions: React.FC<EditTransactionProps> = ({
+export const EditDebt: React.FC<EditDebtProps> = ({
   id,
   modal,
   onClose,
   submit,
 }) => {
   const [formData, setFormData] = useState({
-    transaction_type: "",
+    is_positive: "",
     amount: "",
     description: "",
   });
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    submit(formData);
+    setFormData({
+      is_positive: "",
+      amount: "",
+      description: "",
+    });
+  };
 
   useEffect(() => {
     let token = JSON.parse(localStorage.getItem("access_token") || "null");
@@ -21,7 +39,7 @@ export const EditTransactions: React.FC<EditTransactionProps> = ({
 
     try {
       axios
-        .get(`${import.meta.env.VITE_BASE_URL}/transactions/${id}/`, {
+        .get(`${import.meta.env.VITE_BASE_URL}/debts/${id}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -31,23 +49,6 @@ export const EditTransactions: React.FC<EditTransactionProps> = ({
       console.error(error);
     }
   }, [id, modal]);
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    submit(formData);
-    setFormData({
-      transaction_type: "",
-      amount: "",
-      description: "",
-    });
-  };
 
   return (
     <>
@@ -57,31 +58,29 @@ export const EditTransactions: React.FC<EditTransactionProps> = ({
           modal ? "visible opacity-100" : "collapse opacity-0"
         } duration-300 fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-10`}
       ></div>
-
       <form
-        onSubmit={handleSubmit}
         className={`${
           modal
             ? "visible opacity-100 scale-100"
             : "collapse opacity-0 scale-50"
         } fixed top-1/2 left-1/2 -translate-1/2 rounded-md bg-white px-5 py-8 md:p-10 w-[90%] sm:w-[80%] md:w-1/2 flex flex-col gap-y-5 mx-auto z-20 duration-300`}
+        onSubmit={handleSubmit}
       >
-        <label htmlFor="transaction_type" className="flex flex-col gap-y-2">
-          <span>Select transaction type</span>
+        <label htmlFor="is_positive" className="flex flex-col gap-y-2">
+          <span>Slect positive</span>
           <select
-            name="transaction_type"
-            id="transaction_type"
+            name="is_positive"
+            id="is_positive"
             onChange={handleChange}
-            value={formData.transaction_type}
+            value={formData.is_positive}
           >
             <option value="" disabled>
-              Select transaction type
+              Slect positive
             </option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
           </select>
         </label>
-
         <label htmlFor="amount" className="flex flex-col gap-y-2">
           <span>Amount</span>
           <input
@@ -90,9 +89,9 @@ export const EditTransactions: React.FC<EditTransactionProps> = ({
             id="amount"
             onChange={handleChange}
             value={formData.amount}
+            required
           />
         </label>
-
         <label htmlFor="description" className="flex flex-col gap-y-2">
           <span>Description</span>
           <textarea
@@ -100,11 +99,11 @@ export const EditTransactions: React.FC<EditTransactionProps> = ({
             id="description"
             onChange={handleChange}
             value={formData.description}
+            required
           ></textarea>
         </label>
-
         <button className="py-2 text-white rounded bg-[#f8c023] hover:opacity-80 duration-300">
-          Submit
+          Add transaction
         </button>
       </form>
     </>
