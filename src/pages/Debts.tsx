@@ -19,17 +19,21 @@ import { Delete, Edit } from "lucide-react";
 import { Loader } from "@/components/ui/loader/Loader";
 import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
 import { useDebtTotals } from "@/hooks/useTotals";
+import { EditDebt } from "@/components/ui/modal/EditDebt";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
   const [modal, setModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const { totalRepaid, totalOutstanding } = useDebtTotals(debts);
   const [loadingId, setLoadingId] = useState<number | null>(null);
+  const [debtId, setDebtId] = useState<number | null>(null);
 
   useEffect(() => {
     getDebts();
   }, []);
   const closeModal = () => setModal(false);
+  const closeEditModal = () => setEditModal(false);
   async function getDebts() {
     let accessToken = JSON.parse(
       localStorage.getItem("access_token") || "null"
@@ -122,6 +126,32 @@ export const Debts = () => {
       console.error(error);
     }
   };
+  const handleEdit = async (formData: {
+    is_positive: string;
+    amount: string;
+    description: string;
+  }) => {
+    let token = JSON.parse(localStorage.getItem("access_token") || "null");
+
+    if (!token) return;
+
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_BASE_URL}/debts/${debtId}/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success("Edited debt!");
+      closeModal();
+      getDebts();
+    } catch (error: any) {
+      toast.error(`Error editing debt: ${error.message}`);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -139,6 +169,12 @@ export const Debts = () => {
         </button>
       </div>
       <ToastContainer />
+      <EditDebt
+        id={debtId}
+        modal={editModal}
+        onClose={closeEditModal}
+        submit={handleEdit}
+      />
       <div>
         <Table>
           <TableCaption>A list of debts.</TableCaption>
@@ -196,7 +232,12 @@ export const Debts = () => {
                 </TableCell>
                 <TableCell className="text-right">
                   <TableCell className="text-right flex gap-x-3.5 justify-end">
-                    <button className="edit_button">
+                    <button
+                      className="edit_button"
+                      onClick={() => {
+                        setDebtId(item.id), setEditModal(true);
+                      }}
+                    >
                       <Edit />
                     </button>
                     <button
