@@ -10,23 +10,25 @@ function App() {
   const refreshToken = rawRefreshToken ? JSON.parse(rawRefreshToken) : null;
 
   useEffect(() => {
-    if (!refreshToken) {
-      navigate("/login");
-    } else {
-      axios
-        .post(`${import.meta.env.VITE_BASE_URL}/api/token/refresh/`, {
-          refresh: refreshToken,
-        })
-        .then((response) => {
-          localStorage.setItem(
-            "access_token",
-            JSON.stringify(response.data.access)
-          );
-        })
-        .catch(() => {
-          navigate("/login");
-        });
-    }
+    setTimeout(() => {
+      if (!refreshToken) {
+        navigate("/login");
+      } else {
+        axios
+          .post(`${import.meta.env.VITE_BASE_URL}/api/token/refresh/`, {
+            refresh: refreshToken,
+          })
+          .then((response) => {
+            localStorage.setItem(
+              "access_token",
+              JSON.stringify(response.data.access)
+            );
+          })
+          .catch(() => {
+            navigate("/login");
+          });
+      }
+    }, 1000);
   }, [navigate, refreshToken]);
 
   return (

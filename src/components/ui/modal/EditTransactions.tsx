@@ -38,7 +38,6 @@ export const EditTransactions: React.FC<EditTransactionProps> = ({
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     submit(formData);

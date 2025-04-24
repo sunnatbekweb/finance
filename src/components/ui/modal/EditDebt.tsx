@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import { EditDebtProps } from "@/types";
 import axios from "axios";
-import { useEffect, useState } from "react";
 
 export const EditDebt: React.FC<EditDebtProps> = ({
   id,
@@ -13,24 +13,6 @@ export const EditDebt: React.FC<EditDebtProps> = ({
     amount: "",
     description: "",
   });
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    submit(formData);
-    setFormData({
-      is_positive: "",
-      amount: "",
-      description: "",
-    });
-  };
 
   useEffect(() => {
     let token = JSON.parse(localStorage.getItem("access_token") || "null");
@@ -49,6 +31,22 @@ export const EditDebt: React.FC<EditDebtProps> = ({
       console.error(error);
     }
   }, [id, modal]);
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    submit(formData);
+    setFormData({
+      is_positive: "",
+      amount: "",
+      description: "",
+    });
+  };
 
   return (
     <>
