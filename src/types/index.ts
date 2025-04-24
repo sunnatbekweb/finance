@@ -18,7 +18,7 @@ export type ModalProps = {
   }) => void;
 };
 
-export type EditModalProps = {
+export type EditTransactionProps = {
   id: number | null;
   modal: boolean;
   onClose: () => void;
@@ -28,6 +28,18 @@ export type EditModalProps = {
     description: string;
   }) => void;
 };
+
+export type EditDebtProps = {
+  id: number | null;
+  modal: boolean;
+  onClose: () => void;
+  submit: (formData: {
+    is_positive: string;
+    amount: string;
+    description: string;
+  }) => void;
+};
+
 
 export type DebtModalProps = {
   modal: boolean;
