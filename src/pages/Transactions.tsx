@@ -134,7 +134,9 @@ export const Transactions = () => {
     <div className="w-full flex flex-col">
       <div className="w-full h-fit flex items-center justify-between mb-5">
         <div className="flex items-center gap-x-5">
-          <SidebarTrigger />
+          <div className="md:hidden">
+            <SidebarTrigger />
+          </div>
           <h2 className="font-bold text-base sm:text-lg md:text-2xl text-center">
             Transactions
           </h2>

@@ -144,7 +144,9 @@ export const Debts = () => {
       closeModal();
       getDebts();
     } catch (error: any) {
-      toast.error(`Error editing debt: ${error?.response?.statusText || "Unknown error"}`);
+      toast.error(
+        `Error editing debt: ${error?.response?.statusText || "Unknown error"}`
+      );
     }
   };
 
@@ -152,7 +154,9 @@ export const Debts = () => {
     <div className="w-full">
       <div className="w-full h-fit flex items-center justify-between mb-5">
         <div className="flex items-center gap-x-5">
-          <SidebarTrigger />
+          <div className="md:hidden">
+            <SidebarTrigger />
+          </div>
           <h2 className="font-bold text-2xl text-center">Debts</h2>
         </div>
         <DebtModal modal={modal} onClose={closeModal} submit={handleSubmit} />

@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { AppSidebar } from "./components/layouts/sidebar/AppSidebar";
 import { SidebarProvider } from "./components/ui/sidebar";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
 import axios from "axios";
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
         <div className="w-full p-5">
           <Outlet />
         </div>
+        <ToastContainer />
       </div>
     </SidebarProvider>
   );
