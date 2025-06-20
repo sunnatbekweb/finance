@@ -61,7 +61,6 @@ export const TransactionModal: React.FC<ModalProps> = ({
             <option value="expense">Expense</option>
           </select>
         </label>
-
         <label htmlFor="amount" className="flex flex-col gap-y-2">
           <span>Amount</span>
           <input
@@ -72,7 +71,6 @@ export const TransactionModal: React.FC<ModalProps> = ({
             value={formData.amount}
           />
         </label>
-
         <label htmlFor="description" className="flex flex-col gap-y-2">
           <span>Description</span>
           <textarea
@@ -82,7 +80,6 @@ export const TransactionModal: React.FC<ModalProps> = ({
             value={formData.description}
           ></textarea>
         </label>
-
         <button className="py-2 text-white rounded bg-[#f8c023] hover:opacity-80 duration-300">
           Add transaction
         </button>

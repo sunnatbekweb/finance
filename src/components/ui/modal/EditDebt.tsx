@@ -14,23 +14,6 @@ export const EditDebt: React.FC<EditDebtProps> = ({
     description: "",
   });
 
-  useEffect(() => {
-    let token = JSON.parse(localStorage.getItem("access_token") || "null");
-
-    if (!token || !id) return;
-
-    try {
-      axios
-        .get(`${import.meta.env.VITE_BASE_URL}/debts/${id}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => setFormData(response.data));
-    } catch (error: any) {
-      console.error(error);
-    }
-  }, [id, modal]);
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -48,6 +31,21 @@ export const EditDebt: React.FC<EditDebtProps> = ({
     });
   };
 
+  useEffect(() => {
+    let token = JSON.parse(localStorage.getItem("access_token") || "null");
+    if (!token || !id) return;
+    try {
+      axios
+        .get(`${import.meta.env.VITE_BASE_URL}/debts/${id}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => setFormData(response.data));
+    } catch (error: any) {
+      console.error(error);
+    }
+  }, [id, modal]);
   return (
     <>
       <div

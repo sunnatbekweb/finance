@@ -63,9 +63,7 @@ export const Debts = () => {
     let accessToken = JSON.parse(
       localStorage.getItem("access_token") || "null"
     );
-
     if (!accessToken) return;
-
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/debts/`,
@@ -88,9 +86,7 @@ export const Debts = () => {
   };
   const handleDelete = async (id: number) => {
     const token = JSON.parse(localStorage.getItem("access_token") || "null");
-
     if (!token) return;
-
     try {
       setLoadingId(id);
       await axios.delete(`${import.meta.env.VITE_BASE_URL}/debts/${id}/`, {
@@ -111,9 +107,7 @@ export const Debts = () => {
   };
   const handlePatch = async (id: number, is_positive: boolean) => {
     const token = JSON.parse(localStorage.getItem("access_token") || "null");
-
     if (!token) return;
-
     try {
       await axios.patch(
         `${import.meta.env.VITE_BASE_URL}/debts/${id}/`,
@@ -135,9 +129,7 @@ export const Debts = () => {
     description: string;
   }) => {
     let token = JSON.parse(localStorage.getItem("access_token") || "null");
-
     if (!token) return;
-
     try {
       await axios.put(
         `${import.meta.env.VITE_BASE_URL}/debts/${debtId}/`,

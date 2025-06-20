@@ -11,7 +11,6 @@ export const DebtModal: React.FC<DebtModalProps> = ({
     amount: "",
     description: "",
   });
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -19,7 +18,6 @@ export const DebtModal: React.FC<DebtModalProps> = ({
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     submit(formData);
@@ -29,6 +27,7 @@ export const DebtModal: React.FC<DebtModalProps> = ({
       description: "",
     });
   };
+
   return (
     <>
       <div

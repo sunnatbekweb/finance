@@ -28,17 +28,11 @@ export const Transactions = () => {
   const [loadingId, setLoadingId] = useState<number | null>(null);
   const [transactionId, setTranactionId] = useState<number | null>(null);
 
-  useEffect(() => {
-    getTransactions();
-  }, []);
-
   const closeModal = () => setModal(false);
   const closeEditModal = () => setEditModal(false);
   async function getTransactions() {
     let token = JSON.parse(localStorage.getItem("access_token") || "null");
-
     if (!token) return;
-
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/transactions/`,
@@ -59,9 +53,7 @@ export const Transactions = () => {
     description: string;
   }) => {
     let token = JSON.parse(localStorage.getItem("access_token") || "null");
-
     if (!token) return;
-
     try {
       await axios.post(
         `${import.meta.env.VITE_BASE_URL}/transactions/`,
@@ -83,9 +75,7 @@ export const Transactions = () => {
   };
   const handleDelete = async (id: number) => {
     const token = JSON.parse(localStorage.getItem("access_token") || "null");
-
     if (!token) return;
-
     try {
       setLoadingId(id);
       await axios.delete(
@@ -114,9 +104,7 @@ export const Transactions = () => {
     description: string;
   }) => {
     let token = JSON.parse(localStorage.getItem("access_token") || "null");
-
     if (!token) return;
-
     try {
       await axios.put(
         `${import.meta.env.VITE_BASE_URL}/transactions/${transactionId}/`,
@@ -139,6 +127,9 @@ export const Transactions = () => {
     }
   };
 
+  useEffect(() => {
+    getTransactions();
+  }, []);
   return (
     <div className="w-full flex flex-col">
       <div className="w-full h-fit flex items-center justify-between mb-5">
@@ -175,7 +166,7 @@ export const Transactions = () => {
               <TableHead>Id</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead className="text-center">Description</TableHead>
-              <TableHead className="text-right">Date</TableHead>
+              <TableHead className="text-right">Date & Time</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
