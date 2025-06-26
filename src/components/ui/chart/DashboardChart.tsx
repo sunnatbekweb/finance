@@ -10,8 +10,8 @@ import {
   Area,
 } from "recharts";
 import { format } from "date-fns";
-import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useMemo } from "react";
+import { Empty } from "antd";
 
 type DashboardChartProps = {
   data: Transaction[] | undefined;
@@ -30,12 +30,23 @@ const DashboardChart = ({ data }: DashboardChartProps) => {
   const parsedData =
     data?.map((t) => ({
       ...t,
-      amount: Number(t.amount),
+      amount:
+        t.transaction_type === "income" ? Number(t.amount) : -Number(t.amount),
     })) ?? [];
 
-  useEffect(() => {
-    toast.warn("We are making updates. Some features may not work.");
-  }, []);
+  const gradientOffset = useMemo(() => {
+    if (parsedData.length === 0) return 0;
+
+    const values = parsedData.map((i) => i.amount);
+    const dataMax = Math.max(...values);
+    const dataMin = Math.min(...values);
+
+    if (dataMax <= 0) return 0;
+    if (dataMin >= 0) return 1;
+
+    return dataMax / (dataMax - dataMin);
+  }, [parsedData]);
+
   return (
     <div className="border rounded-xl p-5">
       <div className="pb-5 flex items-center justify-between">
@@ -47,7 +58,7 @@ const DashboardChart = ({ data }: DashboardChartProps) => {
             For all time
           </span>
         </div>
-        <div className="flex items-center border rounded-md font-medium">
+        <div className="flex items-center border rounded-md font-medium overflow-hidden">
           <button className="text-sm px-2 py-1 hover:bg-gray-100 duration-300">
             Last 3 months
           </button>
@@ -60,38 +71,35 @@ const DashboardChart = ({ data }: DashboardChartProps) => {
         </div>
       </div>
       <ResponsiveContainer width="100%" height={300}>
-        <AreaChart
-          width={500}
-          height={400}
-          data={parsedData}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="date"
-            tickFormatter={(value: string) =>
-              format(new Date(value), "dd.MM.yyyy")
-            }
-          />
-          <YAxis tickFormatter={formatNumber} />
-          <Tooltip
-            formatter={(value: number) => formatNumber(value)}
-            labelFormatter={(label: string) =>
-              format(new Date(label), "dd.MM.yyyy")
-            }
-          />
-          <Area
-            type="monotone"
-            dataKey="amount"
-            stroke="#f8c023"
-            fill="#f8c023"
-          />
-        </AreaChart>
+        {parsedData.length === 0 ? (
+          <Empty />
+        ) : (
+          <AreaChart
+            data={parsedData}
+            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+          >
+            <defs>
+              <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset={gradientOffset}
+                  stopColor="green"
+                  stopOpacity={1}
+                />
+                <stop offset={gradientOffset} stopColor="red" stopOpacity={1} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="id" />
+            <YAxis tickFormatter={formatNumber} />
+            <Tooltip formatter={(value: number) => formatNumber(value)} />
+            <Area
+              type="monotone"
+              dataKey="amount"
+              stroke="none"
+              fill="url(#splitColor)"
+            />
+          </AreaChart>
+        )}
       </ResponsiveContainer>
     </div>
   );

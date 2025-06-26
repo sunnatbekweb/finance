@@ -1,31 +1,17 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { TransactionsList } from "@/types";
+import { Space, Table, Tag } from "antd";
+import type { TableProps } from "antd";
+import { Transaction, TransactionsList } from "@/types";
 import { TransactionModal } from "@/components/ui/modal/TransactionModal";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { toast, ToastContainer } from "react-toastify";
-import { Delete, Edit } from "lucide-react";
-import { Loader } from "@/components/ui/loader/Loader";
-import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
-import { useTransactionTotals } from "@/hooks/useTotals";
+import { toast } from "react-toastify";
 import { EditTransactions } from "@/components/ui/modal/EditTransactions";
+import { format } from "date-fns";
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<TransactionsList>();
   const [modal, setModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-  const { totalIncome, totalExpense } = useTransactionTotals(transactions);
-  const [loadingId, setLoadingId] = useState<number | null>(null);
   const [transactionId, setTranactionId] = useState<number | null>(null);
 
   const closeModal = () => setModal(false);
@@ -77,7 +63,6 @@ export const Transactions = () => {
     const token = JSON.parse(localStorage.getItem("access_token") || "null");
     if (!token) return;
     try {
-      setLoadingId(id);
       await axios.delete(
         `${import.meta.env.VITE_BASE_URL}/transactions/${id}/`,
         {
@@ -94,8 +79,6 @@ export const Transactions = () => {
           error?.response?.statusText || "Unknown error"
         }`
       );
-    } finally {
-      setLoadingId(null);
     }
   };
   const handleEdit = async (formData: {
@@ -116,7 +99,7 @@ export const Transactions = () => {
         }
       );
       toast.success("Edited transaction!");
-      closeModal();
+      closeEditModal();
       getTransactions();
     } catch (error: any) {
       toast.error(
@@ -127,6 +110,71 @@ export const Transactions = () => {
     }
   };
 
+  const columns: TableProps<Transaction>["columns"] = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      render: (_, record) => (
+        <span
+          className={
+            record.transaction_type === "expense"
+              ? "text-red-500"
+              : "text-green-600"
+          }
+        >
+          {record.transaction_type === "expense" ? "-" : "+"}
+          {record.amount}
+        </span>
+      ),
+    },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      render: (date: string) => (
+        <span>{format(new Date(date), "dd.MM.yyyy HH:mm")}</span>
+      ),
+    },
+    {
+      title: "Transaction Type",
+      key: "transaction_type",
+      dataIndex: "transaction_type",
+      render: (type: string) => (
+        <Tag color={type === "income" ? "green" : "red"}>
+          {type.charAt(0).toUpperCase() + type.slice(1)}
+        </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <button
+            onClick={() => handleDelete(record.id)}
+            className="text-red-500"
+          >
+            Delete
+          </button>
+          <button
+            onClick={() => {
+              setTranactionId(record.id), setEditModal(true);
+            }}
+            className="text-yellow-500"
+          >
+            Edit
+          </button>
+        </Space>
+      ),
+    },
+  ];
   useEffect(() => {
     getTransactions();
   }, []);
@@ -134,9 +182,6 @@ export const Transactions = () => {
     <div className="w-full flex flex-col">
       <div className="w-full h-fit flex items-center justify-between mb-5">
         <div className="flex items-center gap-x-5">
-          <div className="md:hidden">
-            <SidebarTrigger />
-          </div>
           <h2 className="font-bold text-base sm:text-lg md:text-2xl text-center">
             Transactions
           </h2>
@@ -153,7 +198,6 @@ export const Transactions = () => {
           Add transaction
         </button>
       </div>
-      <ToastContainer />
       <EditTransactions
         id={transactionId}
         modal={editModal}
@@ -161,83 +205,7 @@ export const Transactions = () => {
         submit={handleEdit}
       />
       <div>
-        <Table>
-          <TableCaption>A list of transactions.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Id</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead className="text-center">Description</TableHead>
-              <TableHead className="text-right">Date & Time</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {transactions?.map((transaction) => (
-              <TableRow key={transaction.id}>
-                <TableCell>{transaction.id}</TableCell>
-                <TableCell>
-                  {transaction.transaction_type === "income" ? "+" : "-"}
-                  {formatNumberWithSpaces(transaction.amount)} so'm
-                </TableCell>
-                <TableCell className="text-center">
-                  {transaction.description}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-x-2">
-                    <span>
-                      {new Date(transaction?.date ?? "").toLocaleDateString(
-                        "ru-RU",
-                        {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        }
-                      )}
-                    </span>
-                    {"|"}
-                    <span>
-                      {new Date(transaction.date).toLocaleTimeString("ru-RU", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right flex gap-x-3.5 justify-end">
-                  <button
-                    className="edit_button"
-                    onClick={() => {
-                      setTranactionId(transaction.id), setEditModal(true);
-                    }}
-                  >
-                    <Edit />
-                  </button>
-                  <button
-                    className="delete_button"
-                    onClick={() => handleDelete(transaction.id)}
-                  >
-                    {loadingId === transaction.id ? <Loader /> : <Delete />}
-                  </button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell colSpan={4}>Поступление</TableCell>
-              <TableCell className="text-right text-green-500">
-                +{formatNumberWithSpaces(totalIncome ?? 0)} so'm
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell colSpan={4}>Расход</TableCell>
-              <TableCell className="text-right text-red-500">
-                -{formatNumberWithSpaces(totalExpense ?? 0)} so'm
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
+        <Table<Transaction> columns={columns} dataSource={transactions} />
       </div>
     </div>
   );

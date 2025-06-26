@@ -1,32 +1,16 @@
 import { useEffect, useState } from "react";
 import { DebtModal } from "@/components/ui/modal/DebtModal";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { DebtsList } from "@/types";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Debt, DebtsList } from "@/types";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Delete, Edit } from "lucide-react";
-import { Loader } from "@/components/ui/loader/Loader";
-import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
-import { useDebtTotals } from "@/hooks/useTotals";
+import { toast } from "react-toastify";
 import { EditDebt } from "@/components/ui/modal/EditDebt";
+import { Space, Table, TableProps, Tag } from "antd";
+import { format } from "date-fns";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
   const [modal, setModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-  const { totalRepaid, totalOutstanding } = useDebtTotals(debts);
-  const [loadingId, setLoadingId] = useState<number | null>(null);
   const [debtId, setDebtId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -88,7 +72,6 @@ export const Debts = () => {
     const token = JSON.parse(localStorage.getItem("access_token") || "null");
     if (!token) return;
     try {
-      setLoadingId(id);
       await axios.delete(`${import.meta.env.VITE_BASE_URL}/debts/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -101,26 +84,6 @@ export const Debts = () => {
       toast.error(
         `Error deleting debt: ${error?.response?.statusText || "Unknown error"}`
       );
-    } finally {
-      setLoadingId(null);
-    }
-  };
-  const handlePatch = async (id: number, is_positive: boolean) => {
-    const token = JSON.parse(localStorage.getItem("access_token") || "null");
-    if (!token) return;
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/debts/${id}/`,
-        { is_positive },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      getDebts();
-    } catch (error: any) {
-      toast.error(`${error?.response?.statusText || "Unknown error"}`);
     }
   };
   const handleEdit = async (formData: {
@@ -141,7 +104,7 @@ export const Debts = () => {
         }
       );
       toast.success("Edited debt!");
-      closeModal();
+      closeEditModal();
       getDebts();
     } catch (error: any) {
       toast.error(
@@ -150,13 +113,65 @@ export const Debts = () => {
     }
   };
 
+  const columns: TableProps<Debt>["columns"] = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      render: (_, record) => <span>{record.amount}</span>,
+    },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      render: (date: string) => (
+        <span>{format(new Date(date), "dd.MM.yyyy HH:mm")}</span>
+      ),
+    },
+    {
+      title: "Is positive?",
+      key: "is_positive",
+      dataIndex: "is_positive",
+      render: (type: boolean) => (
+        <Tag color={type === true ? "green" : "red"}>
+          {type === true ? "True" : "Flase"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <button
+            onClick={() => handleDelete(record.id)}
+            className="text-red-500"
+          >
+            Delete
+          </button>
+          <button
+            onClick={() => {
+              setDebtId(record.id), setEditModal(true);
+            }}
+            className="text-yellow-500"
+          >
+            Edit
+          </button>
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <div className="w-full">
       <div className="w-full h-fit flex items-center justify-between mb-5">
         <div className="flex items-center gap-x-5">
-          <div className="md:hidden">
-            <SidebarTrigger />
-          </div>
           <h2 className="font-bold text-2xl text-center">Debts</h2>
         </div>
         <DebtModal modal={modal} onClose={closeModal} submit={handleSubmit} />
@@ -167,104 +182,14 @@ export const Debts = () => {
           Add debt
         </button>
       </div>
-      <ToastContainer />
       <EditDebt
         id={debtId}
         modal={editModal}
         onClose={closeEditModal}
         submit={handleEdit}
       />
-      <div>
-        <Table>
-          <TableCaption>A list of debts.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Id</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead className="text-center">Description</TableHead>
-              <TableHead className="text-right">Date</TableHead>
-              <TableHead className="text-right">Is positive</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {debts?.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.id}</TableCell>
-                <TableCell>
-                  {formatNumberWithSpaces(item.amount ?? 0)} so'm
-                </TableCell>
-                <TableCell className="text-center">
-                  {item.description}
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center justify-end gap-x-2">
-                    <span>
-                      {new Date(item?.date ?? "").toLocaleDateString("ru-RU", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
-                    </span>
-                    {" | "}
-                    <span>
-                      {new Date(item.date).toLocaleTimeString("ru-RU", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div
-                    role="button"
-                    onClick={() => handlePatch(item.id, !item.is_positive)}
-                    className="flex items-center justify-end space-x-2"
-                  >
-                    <Checkbox id={String(item.id)} checked={item.is_positive} />
-                    <label
-                      htmlFor={String(item.id)}
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Returned
-                    </label>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">
-                  <TableCell className="text-right flex gap-x-3.5 justify-end">
-                    <button
-                      className="edit_button"
-                      onClick={() => {
-                        setDebtId(item.id), setEditModal(true);
-                      }}
-                    >
-                      <Edit />
-                    </button>
-                    <button
-                      className="delete_button"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      {loadingId === item.id ? <Loader /> : <Delete />}
-                    </button>
-                  </TableCell>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell colSpan={5}>Погашено</TableCell>
-              <TableCell className="text-right text-green-500">
-                {formatNumberWithSpaces(totalRepaid ?? 0)} so'm
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell colSpan={5}>Не погашено</TableCell>
-              <TableCell className="text-right text-red-500">
-                {formatNumberWithSpaces(totalOutstanding ?? 0)} so'm
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
+      <div className="overflow-x-auto">
+        <Table<Debt> columns={columns} dataSource={debts} />
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import DashboardChart from "@/components/ui/chart/DashboardChart";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { TransactionsList } from "@/types";
 import axios from "axios";
 
@@ -29,9 +28,6 @@ export const Dashboard = () => {
   return (
     <div>
       <div className="flex items-center gap-x-5">
-        <div className="md:hidden">
-          <SidebarTrigger />
-        </div>
         <h2 className="font-bold text-2xl">Dashboard</h2>
       </div>
       <div className="py-5">

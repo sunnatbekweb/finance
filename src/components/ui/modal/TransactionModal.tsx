@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { ModalProps } from "@/types";
+import React, { useEffect, useState } from "react";
+import { CategoryList, ModalProps } from "@/types";
+import axios from "axios";
 
 export const TransactionModal: React.FC<ModalProps> = ({
   modal,
@@ -8,10 +9,11 @@ export const TransactionModal: React.FC<ModalProps> = ({
 }) => {
   const [formData, setFormData] = useState({
     transaction_type: "",
+    category: "",
     amount: "",
     description: "",
   });
-
+  const [category, setCategory] = useState<CategoryList>();
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -25,10 +27,26 @@ export const TransactionModal: React.FC<ModalProps> = ({
     submit(formData);
     setFormData({
       transaction_type: "",
+      category: "",
       amount: "",
       description: "",
     });
   };
+
+  const getCategory = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/category`
+      );
+      setCategory(response.data);
+    } catch (errorr) {
+      console.error(errorr);
+    }
+  };
+
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   return (
     <>
@@ -59,6 +77,24 @@ export const TransactionModal: React.FC<ModalProps> = ({
             </option>
             <option value="income">Income</option>
             <option value="expense">Expense</option>
+          </select>
+        </label>
+        <label htmlFor="category" className="flex flex-col gap-y-2">
+          <span>Select category</span>
+          <select
+            name="category"
+            id="category"
+            onChange={handleChange}
+            value={formData.category}
+          >
+            <option value="" disabled>
+              Select category
+            </option>
+            {category?.map((_) => (
+              <option key={_?.id} value={_?.id}>
+                {_?.name}
+              </option>
+            ))}
           </select>
         </label>
         <label htmlFor="amount" className="flex flex-col gap-y-2">

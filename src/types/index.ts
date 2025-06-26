@@ -40,7 +40,6 @@ export type EditDebtProps = {
   }) => void;
 };
 
-
 export type DebtModalProps = {
   modal: boolean;
   onClose: () => void;
@@ -60,3 +59,10 @@ export type Debt = {
 };
 
 export type DebtsList = Debt[];
+
+export type Category = {
+  id: number;
+  name: string;
+};
+
+export type CategoryList = Category[];
