@@ -9,7 +9,6 @@ import {
   ResponsiveContainer,
   Area,
 } from "recharts";
-import { format } from "date-fns";
 import { useMemo } from "react";
 import { Empty } from "antd";
 
