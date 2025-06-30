@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useState } from "react";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -52,7 +52,7 @@ export const SignUp = () => {
     <div className="flex items-center justify-center h-screen">
       <div className="w-full px-5 md:max-w-[400px] md:px-0 mx-auto">
         <h2 className="fontPoppins font-extrabold text-3xl md:text-[40px] leading-9 tracking-[0.08em] text-center text-[#f8c023] mb-4 md:mb-8">
-          Financial Management
+          One System Finance
         </h2>
 
         <h3 className="text-2xl font-semibold text-center mb-4 md:mb-8">
@@ -65,12 +65,12 @@ export const SignUp = () => {
           className="flex flex-col gap-y-3 md:gap-y-6 mb-6 md:mb-10"
         >
           <label htmlFor="username" className="flex flex-col gap-y-2">
-            <span className="text-sm md:text-base">User name</span>
+            <span className="text-sm md:text-base">Username</span>
             <input
               type="text"
               name="username"
               id="username"
-              placeholder=""
+              placeholder="Enter your username"
               onChange={handleChange}
               value={formData.username}
               className="px-4 rounded border focus:outline-[#f8c023]"
@@ -83,7 +83,7 @@ export const SignUp = () => {
               type="first_name"
               name="first_name"
               id="first_name"
-              placeholder=""
+              placeholder="Your first name"
               onChange={handleChange}
               value={formData.first_name}
               className="px-4 rounded border focus:outline-[#f8c023]"
@@ -96,7 +96,7 @@ export const SignUp = () => {
               type="last_name"
               name="last_name"
               id="last_name"
-              placeholder=""
+              placeholder="Your last name"
               onChange={handleChange}
               value={formData.last_name}
               className="px-4 rounded border focus:outline-[#f8c023]"
@@ -109,7 +109,7 @@ export const SignUp = () => {
               type="password"
               name="password"
               id="password"
-              placeholder=""
+              placeholder="Your new password"
               onChange={handleChange}
               value={formData.password}
               className="px-4 rounded border focus:outline-[#f8c023]"
@@ -122,7 +122,7 @@ export const SignUp = () => {
               type="password2"
               name="password2"
               id="password2"
-              placeholder=""
+              placeholder="Confirm your password"
               onChange={handleChange}
               value={formData.password2}
               className="px-4 rounded border focus:outline-[#f8c023]"
@@ -133,7 +133,7 @@ export const SignUp = () => {
             Sign up
           </button>
         </form>
-        <p className="text-center text-gray-400">
+        <p className="text-center text-gray-500">
           Already have an account{" "}
           <Link to={"/login"} className="font-semibold text-[#f8c023]">
             Sign in here
