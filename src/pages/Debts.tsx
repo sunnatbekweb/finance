@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
+import { DebtsList } from "@/types/type";
 import { DebtModal } from "@/components/ui/modal/DebtModal";
-import { Debt, DebtsList } from "@/types";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { EditDebt } from "@/components/ui/modal/EditDebt";
-import { Space, Table, TableProps, Tag } from "antd";
-import { format } from "date-fns";
+import { DebtsTable } from "@/components/ui/table/DebtsTable";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
@@ -13,9 +12,6 @@ export const Debts = () => {
   const [editModal, setEditModal] = useState(false);
   const [debtId, setDebtId] = useState<number | null>(null);
 
-  useEffect(() => {
-    getDebts();
-  }, []);
   const closeModal = () => setModal(false);
   const closeEditModal = () => setEditModal(false);
   async function getDebts() {
@@ -113,60 +109,9 @@ export const Debts = () => {
     }
   };
 
-  const columns: TableProps<Debt>["columns"] = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      render: (text) => <span>{text}</span>,
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-      render: (_, record) => <span>{record.amount}</span>,
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      render: (date: string) => (
-        <span>{format(new Date(date), "dd.MM.yyyy HH:mm")}</span>
-      ),
-    },
-    {
-      title: "Is positive?",
-      key: "is_positive",
-      dataIndex: "is_positive",
-      render: (type: boolean) => (
-        <Tag color={type === true ? "green" : "red"}>
-          {type === true ? "True" : "Flase"}
-        </Tag>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <button
-            onClick={() => handleDelete(record.id)}
-            className="text-red-500"
-          >
-            Delete
-          </button>
-          <button
-            onClick={() => {
-              setDebtId(record.id), setEditModal(true);
-            }}
-            className="text-yellow-500"
-          >
-            Edit
-          </button>
-        </Space>
-      ),
-    },
-  ];
+  useEffect(() => {
+    getDebts();
+  }, []);
 
   return (
     <div className="w-full">
@@ -189,7 +134,14 @@ export const Debts = () => {
         submit={handleEdit}
       />
       <div className="overflow-x-auto">
-        <Table<Debt> columns={columns} dataSource={debts} />
+        <DebtsTable
+          debts={debts}
+          onDelete={handleDelete}
+          onEdit={(id) => {
+            setDebtId(id);
+            setEditModal(true);
+          }}
+        />
       </div>
     </div>
   );

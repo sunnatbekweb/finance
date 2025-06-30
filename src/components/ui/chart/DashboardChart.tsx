@@ -1,4 +1,4 @@
-import { Transaction } from "@/types";
+import { Transaction } from "@/types/type";
 import { Link } from "react-router-dom";
 import {
   AreaChart,

@@ -34,7 +34,7 @@ function App() {
   }, [navigate, refreshToken]);
 
   return (
-    <div className="flex w-full">
+    <div className="flex">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex flex-col w-full">
         <Header setSidebarOpen={setSidebarOpen} />

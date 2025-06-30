@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CategoryList, ModalProps } from "@/types";
+import { CategoryList, ModalProps } from "@/types/type";
 import axios from "axios";
 
 export const TransactionModal: React.FC<ModalProps> = ({

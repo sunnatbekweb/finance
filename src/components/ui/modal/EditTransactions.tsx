@@ -1,4 +1,4 @@
-import { EditTransactionProps } from "@/types";
+import { EditTransactionProps } from "@/types/type";
 import axios from "axios";
 import { useEffect, useState } from "react";
 

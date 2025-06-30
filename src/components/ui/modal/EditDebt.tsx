@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { EditDebtProps } from "@/types";
+import { EditDebtProps } from "@/types/type";
 import axios from "axios";
 
 export const EditDebt: React.FC<EditDebtProps> = ({

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DashboardChart from "@/components/ui/chart/DashboardChart";
-import { TransactionsList } from "@/types";
+import { TransactionsList } from "@/types/type";
 import axios from "axios";
 
 export const Dashboard = () => {

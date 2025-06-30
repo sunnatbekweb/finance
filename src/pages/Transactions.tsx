@@ -1,12 +1,10 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { Space, Table, Tag } from "antd";
-import type { TableProps } from "antd";
-import { Transaction, TransactionsList } from "@/types";
+import { TransactionsList } from "@/types/type";
 import { TransactionModal } from "@/components/ui/modal/TransactionModal";
-import { toast } from "react-toastify";
 import { EditTransactions } from "@/components/ui/modal/EditTransactions";
-import { format } from "date-fns";
+import { TransactionsTable } from "@/components/ui/table/TransactionTable";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 export const Transactions = () => {
   const [transactions, setTransactions] = useState<TransactionsList>();
@@ -110,74 +108,10 @@ export const Transactions = () => {
     }
   };
 
-  const columns: TableProps<Transaction>["columns"] = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      render: (text) => <span>{text}</span>,
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-      render: (_, record) => (
-        <span
-          className={
-            record.transaction_type === "expense"
-              ? "text-red-500"
-              : "text-green-600"
-          }
-        >
-          {record.transaction_type === "expense" ? "-" : "+"}
-          {record.amount}
-        </span>
-      ),
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      render: (date: string) => (
-        <span>{format(new Date(date), "dd.MM.yyyy HH:mm")}</span>
-      ),
-    },
-    {
-      title: "Transaction Type",
-      key: "transaction_type",
-      dataIndex: "transaction_type",
-      render: (type: string) => (
-        <Tag color={type === "income" ? "green" : "red"}>
-          {type.charAt(0).toUpperCase() + type.slice(1)}
-        </Tag>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <button
-            onClick={() => handleDelete(record.id)}
-            className="text-red-500"
-          >
-            Delete
-          </button>
-          <button
-            onClick={() => {
-              setTranactionId(record.id), setEditModal(true);
-            }}
-            className="text-yellow-500"
-          >
-            Edit
-          </button>
-        </Space>
-      ),
-    },
-  ];
   useEffect(() => {
     getTransactions();
   }, []);
+
   return (
     <div className="w-full flex flex-col">
       <div className="w-full h-fit flex items-center justify-between mb-5">
@@ -205,7 +139,14 @@ export const Transactions = () => {
         submit={handleEdit}
       />
       <div>
-        <Table<Transaction> columns={columns} dataSource={transactions} />
+        <TransactionsTable
+          transactions={transactions}
+          onDelete={handleDelete}
+          onEdit={(id) => {
+            setTranactionId(id);
+            setEditModal(true);
+          }}
+        />
       </div>
     </div>
   );

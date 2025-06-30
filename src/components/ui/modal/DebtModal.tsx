@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DebtModalProps } from "@/types";
+import { DebtModalProps } from "@/types/type";
 
 export const DebtModal: React.FC<DebtModalProps> = ({
   modal,

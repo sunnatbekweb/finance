@@ -1,4 +1,4 @@
-import { Transaction, Debt } from "@/types";
+import { Transaction, Debt } from "@/types/type";
 
 export function useTransactionTotals(transactions?: Transaction[]) {
   const totalIncome = transactions?.reduce((acc, curr) => {
