@@ -1,7 +1,8 @@
 import React from "react";
 import { Space, Table, Tag } from "antd";
-import type { Debt } from "@/types/type";
 import type { TableProps } from "antd";
+import type { Debt } from "@/types/type";
+import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
 import { format } from "date-fns";
 
 interface DebtsTableProps {
@@ -26,7 +27,11 @@ export const DebtsTable: React.FC<DebtsTableProps> = ({
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
-      render: (_, record) => <span>{record.amount}</span>,
+      render: (_, record) => (
+        <span className="font-medium">
+          {formatNumberWithSpaces(record.amount)} UZS
+        </span>
+      ),
     },
     {
       title: "Date",

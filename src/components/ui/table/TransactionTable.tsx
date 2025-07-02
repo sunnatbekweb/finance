@@ -2,6 +2,7 @@ import React from "react";
 import { Table, Tag, Space } from "antd";
 import type { TableProps } from "antd";
 import type { Transaction } from "@/types/type";
+import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
 import { format } from "date-fns";
 
 interface TransactionsTableProps {
@@ -28,14 +29,14 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       key: "amount",
       render: (_, record) => (
         <span
-          className={
+          className={`font-medium ${
             record.transaction_type === "expense"
               ? "text-red-500"
               : "text-green-500"
-          }
+          }`}
         >
           {record.transaction_type === "expense" ? "-" : "+"}
-          {record.amount}
+          {formatNumberWithSpaces(record.amount)} UZS
         </span>
       ),
     },
