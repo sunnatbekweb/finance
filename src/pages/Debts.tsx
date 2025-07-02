@@ -5,6 +5,7 @@ import { EditDebt } from "@/components/ui/modal/EditDebt";
 import { DebtsTable } from "@/components/ui/table/DebtsTable";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
 
 export const Debts = () => {
   const [debts, setDebts] = useState<DebtsList>();
@@ -109,6 +110,12 @@ export const Debts = () => {
     }
   };
 
+  const totalDebts = debts
+    ? debts
+        .filter((debt) => debt.is_positive === false)
+        .reduce((sum, debt) => sum + Number(debt.amount), 0)
+    : 0;
+
   useEffect(() => {
     getDebts();
   }, []);
@@ -120,12 +127,20 @@ export const Debts = () => {
           <h2 className="font-bold text-2xl text-center">Debts</h2>
         </div>
         <DebtModal modal={modal} onClose={closeModal} submit={handleSubmit} />
-        <button
-          onClick={() => setModal(true)}
-          className="py-2 px-4 text-white text-xs rounded bg-[#f8c023] hover:opacity-80 duration-300"
-        >
-          Add debt
-        </button>
+        <div className="flex items-center gap-x-10">
+          <div className="flex items-center gap-x-1 font-medium">
+            <span>Remaining debts:</span>
+            <span className="text-yellow-400">
+              {formatNumberWithSpaces(totalDebts)} UZS
+            </span>
+          </div>
+          <button
+            onClick={() => setModal(true)}
+            className="py-2 px-4 text-white text-xs rounded bg-[#f8c023] hover:opacity-80 duration-300"
+          >
+            Add debt
+          </button>
+        </div>
       </div>
       <EditDebt
         id={debtId}

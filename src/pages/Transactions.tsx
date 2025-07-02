@@ -3,6 +3,7 @@ import { TransactionsList } from "@/types/type";
 import { TransactionModal } from "@/components/ui/modal/TransactionModal";
 import { EditTransactions } from "@/components/ui/modal/EditTransactions";
 import { TransactionsTable } from "@/components/ui/table/TransactionTable";
+import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -141,11 +142,15 @@ export const Transactions = () => {
           <div className="flex items-center gap-x-5 font-medium">
             <div className="text-sm text-gray-700">
               <span>Total income:</span>{" "}
-              <span className="text-green-500">+{totalIncomeAmount}</span>
+              <span className="text-green-500">
+                +{formatNumberWithSpaces(totalIncomeAmount)} UZS
+              </span>
             </div>
             <div className="text-sm text-gray-700">
               <span>Total expence:</span>{" "}
-              <span className="text-red-500">-{totalExpenseAmount}</span>
+              <span className="text-red-500">
+                -{formatNumberWithSpaces(totalExpenseAmount)} UZS
+              </span>
             </div>
           </div>
           <button
