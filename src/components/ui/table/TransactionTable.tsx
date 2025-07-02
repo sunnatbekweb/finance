@@ -31,7 +31,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
           className={
             record.transaction_type === "expense"
               ? "text-red-500"
-              : "text-green-600"
+              : "text-green-500"
           }
         >
           {record.transaction_type === "expense" ? "-" : "+"}

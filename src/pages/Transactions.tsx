@@ -108,6 +108,18 @@ export const Transactions = () => {
     }
   };
 
+  const totalIncomeAmount = transactions
+    ? transactions
+        .filter((transaction) => transaction.transaction_type === "income")
+        .reduce((sum, transaction) => sum + Number(transaction.amount), 0)
+    : 0;
+
+  const totalExpenseAmount = transactions
+    ? transactions
+        .filter((transaction) => transaction.transaction_type === "expense")
+        .reduce((sum, transaction) => sum + Number(transaction.amount), 0)
+    : 0;
+
   useEffect(() => {
     getTransactions();
   }, []);
@@ -125,12 +137,24 @@ export const Transactions = () => {
           onClose={closeModal}
           submit={handleSubmit}
         />
-        <button
-          onClick={() => setModal(true)}
-          className="py-2 px-4 text-white text-xs rounded bg-[#f8c023] hover:opacity-80 duration-300"
-        >
-          Add transaction
-        </button>
+        <div className="flex items-center gap-x-10">
+          <div className="flex items-center gap-x-5 font-medium">
+            <div className="text-sm text-gray-700">
+              <span>Total income:</span>{" "}
+              <span className="text-green-500">+{totalIncomeAmount}</span>
+            </div>
+            <div className="text-sm text-gray-700">
+              <span>Total expence:</span>{" "}
+              <span className="text-red-500">-{totalExpenseAmount}</span>
+            </div>
+          </div>
+          <button
+            onClick={() => setModal(true)}
+            className="py-2 px-4 text-white text-xs rounded bg-[#f8c023] hover:opacity-80 duration-300"
+          >
+            Add transaction
+          </button>
+        </div>
       </div>
       <EditTransactions
         id={transactionId}
