@@ -28,7 +28,7 @@ export const DebtsTable: React.FC<DebtsTableProps> = ({
       dataIndex: "amount",
       key: "amount",
       render: (_, record) => (
-        <span className="font-medium">
+        <span className="font-medium text-yellow-400">
           {formatNumberWithSpaces(record.amount)} UZS
         </span>
       ),
