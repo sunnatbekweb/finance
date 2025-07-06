@@ -11,14 +11,14 @@ const currencyFlags: Record<string, string> = {
 };
 
 export const CurrencyItem: React.FC<{ rate: ExchangeRate }> = ({ rate }) => (
-  <div key={rate.id} className="header__exchange--rate-item">
+  <div key={rate.id} className="currency-item">
     <div className="image-container">
       <img src={currencyFlags[rate.Ccy]} alt={`Flag ${rate.Ccy}`} />
     </div>
-    <div>
+    <div className="currency-item_info">
       <p className="font-bold text-[0.875rem] mb-1">{rate.Rate} UZS</p>
       <div className="flex items-center gap-x-2 text-[0.75rem]">
-        <span className="text-black/60">{rate.Ccy}</span>
+        <span className="currency text-black/60">{rate.Ccy}</span>
         <div className="flex items-center gap-x-1">
           <CurrencyArrow Diff={rate.Diff} />
           <span
