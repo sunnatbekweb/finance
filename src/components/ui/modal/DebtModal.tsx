@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { DebtModalProps } from "@/types/type";
+import { Modal } from "antd";
 
 export const DebtModal: React.FC<DebtModalProps> = ({
   modal,
@@ -29,19 +30,25 @@ export const DebtModal: React.FC<DebtModalProps> = ({
   };
 
   return (
-    <>
-      <div
-        onClick={onClose}
-        className={`${
-          modal ? "visible opacity-100" : "collapse opacity-0"
-        } duration-300 fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-10`}
-      ></div>
+    <Modal
+      title="Create transaction"
+      centered
+      open={modal}
+      onOk={onClose}
+      onCancel={onClose}
+      okButtonProps={{ hidden: true }}
+      cancelButtonProps={{ hidden: true }}
+      width={{
+        xs: "90%",
+        sm: "80%",
+        md: "70%",
+        lg: "60%",
+        xl: "50%",
+        xxl: "40%",
+      }}
+    >
       <form
-        className={`${
-          modal
-            ? "visible opacity-100 scale-100"
-            : "collapse opacity-0 scale-50"
-        } fixed top-1/2 left-1/2 -translate-1/2 rounded-md bg-white px-5 py-8 md:p-10 w-[90%] sm:w-[80%] md:w-1/2 flex flex-col gap-y-5 mx-auto z-20 duration-300`}
+        className={`rounded-md flex flex-col gap-y-5 pt-3 mx-auto`}
         onSubmit={handleSubmit}
       >
         <label htmlFor="is_positive" className="flex flex-col gap-y-2">
@@ -84,6 +91,6 @@ export const DebtModal: React.FC<DebtModalProps> = ({
           Add transaction
         </button>
       </form>
-    </>
+    </Modal>
   );
 };
