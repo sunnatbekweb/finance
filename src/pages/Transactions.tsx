@@ -135,7 +135,7 @@ export const Transactions = () => {
         </div>
         <TransactionModal
           modal={modal}
-          onClose={closeModal}
+          onClose={() => setModal(false)}
           submit={handleSubmit}
         />
         <div className="flex items-center gap-x-10">
