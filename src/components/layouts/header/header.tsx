@@ -1,34 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { ExchangeRate, SidebarInterface } from "@/types/interface";
+import React from "react";
+import { SidebarInterface } from "@/types/interface";
 import { CurrencyItem } from "@/components/ui/CurrencyItem";
 import arrow from "../../../assets/icons/arrow_right.svg";
-import axios from "axios";
 import "@/styles/header.scss";
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 
 export const Header: React.FC<SidebarInterface> = ({ setSidebarOpen }) => {
-  const [exchangeRate, setExchangeRate] = useState<ExchangeRate[]>([]);
   const today = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-
-  const getExchangeRate = async () => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_EXCHANGE_RATE_API}`
-      );
-      setExchangeRate(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    getExchangeRate();
-  }, []);
-
-  const currenciesToShow = ["USD", "EUR", "RUB"];
+  const { exchangeRate, currenciesToShow } = useExchangeRate();
 
   return (
     <header className="header">

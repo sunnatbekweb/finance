@@ -1,6 +1,8 @@
 import React from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import "@/styles/sidbar.scss";
+import { CurrencyItem } from "@/components/ui/CurrencyItem";
 
 interface Props {
   sidebarOpen: boolean;
@@ -10,6 +12,7 @@ interface Props {
 export const Sidebar: React.FC<Props> = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { exchangeRate, currenciesToShow } = useExchangeRate();
   const onLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
@@ -51,6 +54,13 @@ export const Sidebar: React.FC<Props> = ({ sidebarOpen, setSidebarOpen }) => {
           </nav>
         </div>
         <div className="sidebar__footer">
+          <div className="sidebar__footer--exchangeRate">
+            {exchangeRate
+              .filter((currency) => currenciesToShow.includes(currency.Ccy))
+              .map((item) => (
+                <CurrencyItem key={item.id} rate={item} />
+              ))}
+          </div>
           <button onClick={() => onLogout()}>Log out</button>
         </div>
       </aside>
