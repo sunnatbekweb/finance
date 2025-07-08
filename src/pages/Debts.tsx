@@ -31,7 +31,7 @@ export const Debts = () => {
           },
         }
       );
-      setDebts(response.data);
+      setDebts(response.data.reverse());
     } catch (error: any) {
       console.error(error);
     }
