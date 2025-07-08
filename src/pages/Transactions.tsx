@@ -27,7 +27,7 @@ export const Transactions = () => {
           },
         }
       );
-      setTransactions(response.data);
+      setTransactions(response.data.reverse());
     } catch (error: any) {
       console.error(error);
     }
@@ -169,7 +169,7 @@ export const Transactions = () => {
       />
       <div>
         <TransactionsTable
-          transactions={transactions}
+          transactions={transactions?.reverse()}
           onDelete={handleDelete}
           onEdit={(id) => {
             setTranactionId(id);
