@@ -38,7 +38,7 @@ function App() {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex flex-col w-full">
         <Header setSidebarOpen={setSidebarOpen} />
-        <main className="p-5">
+        <main className="p-2.5 md:p-5">
           <Outlet />
         </main>
       </div>

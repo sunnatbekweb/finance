@@ -126,9 +126,8 @@ export const Debts = () => {
         <div className="flex items-center gap-x-5">
           <h2 className="font-bold text-2xl text-center">Debts</h2>
         </div>
-        <DebtModal modal={modal} onClose={closeModal} submit={handleSubmit} />
         <div className="flex items-center gap-x-10">
-          <div className="flex items-center gap-x-1 font-medium">
+          <div className="hidden lg:flex items-center gap-x-1 font-medium">
             <span>Remaining debts:</span>
             <span className="text-yellow-400">
               {formatNumberWithSpaces(totalDebts)} UZS
@@ -142,13 +141,7 @@ export const Debts = () => {
           </button>
         </div>
       </div>
-      <EditDebt
-        id={debtId}
-        modal={editModal}
-        onClose={closeEditModal}
-        submit={handleEdit}
-      />
-      <div className="overflow-x-auto">
+      <div className="max-w-full overflow-x-auto">
         <DebtsTable
           debts={debts}
           onDelete={handleDelete}
@@ -158,6 +151,15 @@ export const Debts = () => {
           }}
         />
       </div>
+
+      {/* Action modals */}
+      <DebtModal modal={modal} onClose={closeModal} submit={handleSubmit} />
+      <EditDebt
+        id={debtId}
+        modal={editModal}
+        onClose={closeEditModal}
+        submit={handleEdit}
+      />
     </div>
   );
 };

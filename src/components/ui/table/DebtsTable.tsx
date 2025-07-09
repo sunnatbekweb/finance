@@ -28,7 +28,7 @@ export const DebtsTable: React.FC<DebtsTableProps> = ({
       dataIndex: "amount",
       key: "amount",
       render: (_, record) => (
-        <span className="font-medium text-yellow-400">
+        <span className="font-medium whitespace-nowrap text-yellow-400">
           {formatNumberWithSpaces(record.amount)} UZS
         </span>
       ),
@@ -38,7 +38,9 @@ export const DebtsTable: React.FC<DebtsTableProps> = ({
       dataIndex: "date",
       key: "date",
       render: (date: string) => (
-        <span>{format(new Date(date), "dd.MM.yyyy HH:mm")}</span>
+        <span className="whitespace-nowrap">
+          {format(new Date(date), "dd.MM.yyyy HH:mm")}
+        </span>
       ),
     },
     {
