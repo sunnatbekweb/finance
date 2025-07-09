@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DashboardChart from "@/components/ui/chart/DashboardChart";
+import DashboardChart from "@/components/ui/chart/Dashboard-chart";
 import { TransactionsList } from "@/types/type";
 import axios from "axios";
 

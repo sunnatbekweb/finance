@@ -28,6 +28,7 @@ export const Sidebar: React.FC<Props> = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
           <nav className="sidebar__top--nav">
             <NavLink
+              onClick={() => setSidebarOpen(false)}
               to={"/"}
               className={`sidebar__top--nav-item ${
                 location.pathname === "/" && "active"
@@ -36,6 +37,7 @@ export const Sidebar: React.FC<Props> = ({ sidebarOpen, setSidebarOpen }) => {
               Dashboard
             </NavLink>
             <NavLink
+              onClick={() => setSidebarOpen(false)}
               to={"/transactions"}
               className={`sidebar__top--nav-item ${
                 location.pathname === "/transactions" && "active"
@@ -44,6 +46,7 @@ export const Sidebar: React.FC<Props> = ({ sidebarOpen, setSidebarOpen }) => {
               Transactions
             </NavLink>
             <NavLink
+              onClick={() => setSidebarOpen(false)}
               to={"/debts"}
               className={`sidebar__top--nav-item ${
                 location.pathname === "/debts" && "active"

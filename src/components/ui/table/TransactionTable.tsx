@@ -29,7 +29,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       key: "amount",
       render: (_, record) => (
         <span
-          className={`font-medium ${
+          className={`font-medium whitespace-nowrap ${
             record.transaction_type === "expense"
               ? "text-red-500"
               : "text-green-500"
@@ -45,7 +45,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       dataIndex: "date",
       key: "date",
       render: (date: string) => (
-        <span>{format(new Date(date), "dd.MM.yyyy HH:mm")}</span>
+        <span className="whitespace-nowrap">{format(new Date(date), "dd.MM.yyyy HH:mm")}</span>
       ),
     },
     {

@@ -133,13 +133,8 @@ export const Transactions = () => {
             Transactions
           </h2>
         </div>
-        <TransactionModal
-          modal={modal}
-          onClose={() => setModal(false)}
-          submit={handleSubmit}
-        />
         <div className="flex items-center gap-x-10">
-          <div className="flex items-center gap-x-5 font-medium">
+          <div className="hidden lg:flex flex-col xl:flex-row items-center gap-x-5 font-medium">
             <div className="text-sm text-gray-700">
               <span>Total income:</span>{" "}
               <span className="text-green-500">
@@ -161,13 +156,7 @@ export const Transactions = () => {
           </button>
         </div>
       </div>
-      <EditTransactions
-        id={transactionId}
-        modal={editModal}
-        onClose={closeEditModal}
-        submit={handleEdit}
-      />
-      <div>
+      <div className="max-w-full overflow-x-auto">
         <TransactionsTable
           transactions={transactions?.reverse()}
           onDelete={handleDelete}
@@ -177,6 +166,19 @@ export const Transactions = () => {
           }}
         />
       </div>
+
+      {/* Action modals */}
+      <EditTransactions
+        id={transactionId}
+        modal={editModal}
+        onClose={closeEditModal}
+        submit={handleEdit}
+      />
+      <TransactionModal
+        modal={modal}
+        onClose={() => setModal(false)}
+        submit={handleSubmit}
+      />
     </div>
   );
 };
