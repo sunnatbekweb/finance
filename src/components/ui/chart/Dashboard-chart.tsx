@@ -31,7 +31,7 @@ const DashboardChart = ({ data }: DashboardChartProps) => {
             For all time
           </span>
         </div>
-        <div className="flex items-center border rounded-md font-medium overflow-hidden">
+        <div className="hidden sm:flex items-center border rounded-md font-medium overflow-hidden">
           <button className="text-sm px-2 py-1 hover:bg-gray-100 duration-300">
             Last 3 months
           </button>
