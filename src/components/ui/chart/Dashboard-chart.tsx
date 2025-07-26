@@ -8,7 +8,7 @@ type DashboardChartProps = {
 
 const DashboardChart = ({ data }: DashboardChartProps) => {
   if (!data) return null;
-  
+
   const sortedData = [...data].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
@@ -21,13 +21,16 @@ const DashboardChart = ({ data }: DashboardChartProps) => {
   });
 
   return (
-    <div className="border rounded-xl p-5">
+    <div className="border rounded-xl p-2.5 md:p-5">
       <div className="pb-5 flex items-center justify-between">
         <div className="flex flex-col">
-          <Link to={"/transactions"} className="font-medium text-xl">
+          <Link
+            to={"/transactions"}
+            className="font-medium text-base md:text-xl"
+          >
             Transactions
           </Link>
-          <span className="text-sm font-medium text-gray-500">
+          <span className="text-xs md:text-sm font-medium text-gray-500">
             For all time
           </span>
         </div>

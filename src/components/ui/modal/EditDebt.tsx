@@ -99,7 +99,7 @@ export const EditDebt: React.FC<EditDebtProps> = ({
           ></textarea>
         </label>
         <button className="py-2 text-white rounded bg-[#f8c023] hover:opacity-80 duration-300">
-          Add transaction
+          Edit debt
         </button>
       </form>
     </>
