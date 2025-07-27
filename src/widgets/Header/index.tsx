@@ -3,7 +3,7 @@ import { SidebarInterface } from "@/types/interface";
 import { CurrencyItem } from "@/components/ui/CurrencyItem";
 import arrow from "../../assets/icons/arrow_right.svg";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
-import "@/styles/header.scss";
+import "./index.scss";
 
 export const Header: React.FC<SidebarInterface> = ({ setSidebarOpen }) => {
   const today = new Date().toLocaleDateString("en-US", {
