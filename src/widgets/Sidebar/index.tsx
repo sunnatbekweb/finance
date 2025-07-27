@@ -1,8 +1,8 @@
 import React from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
-import "@/styles/sidbar.scss";
 import { CurrencyItem } from "@/components/ui/CurrencyItem";
+import "@/styles/sidbar.scss";
 
 interface Props {
   sidebarOpen: boolean;
