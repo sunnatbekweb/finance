@@ -88,7 +88,7 @@ export const DebtModal: React.FC<DebtModalProps> = ({
           ></textarea>
         </label>
         <button className="py-2 text-white rounded bg-[#f8c023] hover:opacity-80 duration-300">
-          Add transaction
+          Add debt
         </button>
       </form>
     </Modal>

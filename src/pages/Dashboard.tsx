@@ -28,7 +28,7 @@ export const Dashboard = () => {
   return (
     <div>
       <div className="flex items-center gap-x-5">
-        <h2 className="font-bold text-2xl">Dashboard</h2>
+        <h2 className="font-bold text-xl md:text-2xl">Dashboard</h2>
       </div>
       <div className="py-5">
         <DashboardChart data={transactions} />

@@ -1,9 +1,9 @@
 import React from "react";
 import { SidebarInterface } from "@/types/interface";
 import { CurrencyItem } from "@/components/ui/CurrencyItem";
-import arrow from "../../../assets/icons/arrow_right.svg";
-import "@/styles/header.scss";
+import arrow from "../../assets/icons/arrow_right.svg";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
+import "./index.scss";
 
 export const Header: React.FC<SidebarInterface> = ({ setSidebarOpen }) => {
   const today = new Date().toLocaleDateString("en-US", {

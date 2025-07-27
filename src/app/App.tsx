@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { Sidebar } from "@/components/layouts/sidebar/sidebar";
-import { Header } from "@/components/layouts/header/header";
+import { Sidebar } from "@/widgets/Sidebar";
+import { Header } from "@/widgets/Header";
 import { ToastContainer } from "react-toastify";
 import axios from "axios";
 

@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+:root {
+  --primary-color: #f8c023;
+  --red: #ff0000;
+  --white: #ffffff;
+  --background-color: #f0f0f0;
+}
+
 body {
   font-family: "Inter", sans-serif;
 }
@@ -17,30 +24,12 @@ input,
 textarea,
 select {
   padding: 6px 8px;
-  border: 1px solid #f8c023;
+  border: 1px solid var(--primary-color);
   border-radius: 4px;
 
   &:focus {
-    outline-color: #f8c023;
+    outline-color: var(--primary-color);
   }
-}
-
-.edit_button {
-  padding: 6px;
-  border-radius: 6px;
-  color: #ffffff;
-  background: #f8c023;
-}
-
-.delete_button {
-  min-width: 36px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 6px;
-  border-radius: 6px;
-  color: #ffffff;
-  background: #ff0000;
 }
 
 .currency-item {
@@ -67,11 +56,11 @@ select {
   textarea,
   select {
     padding: 8px 16px;
-    border: 1px solid #f8c023;
+    border: 1px solid var(--primary-color);
     border-radius: 4px;
 
     &:focus {
-      outline-color: #f8c023;
+      outline-color: var(--primary-color);
     }
   }
 }

@@ -99,7 +99,7 @@ export const EditTransactions: React.FC<EditTransactionProps> = ({
         </label>
 
         <button className="py-2 text-white rounded bg-[#f8c023] hover:opacity-80 duration-300">
-          Submit
+          Edit transaction
         </button>
       </form>
     </>
