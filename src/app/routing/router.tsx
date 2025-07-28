@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
-import { SignIn } from "../../pages/auth/SignIn";
-import { SignUp } from "../../pages/auth/SignUp";
-import { Transactions } from "../../pages/Transactions";
-import { Debts } from "../../pages/Debts";
-import { Dashboard } from "../../pages/Dashboard";
+import { SignIn } from "@/pages/Auth/SignIn";
+import { SignUp } from "@/pages/Auth/SignUp";
+import { Dashboard } from "@/pages/Dashboard";
+import { Transactions } from "@/pages/Transactions";
+import { Debts } from "@/pages/Debts";
 
 export const router = createBrowserRouter([
   {
