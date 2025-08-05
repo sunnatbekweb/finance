@@ -1,21 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Table, Tag, Space } from "antd";
 import type { TableProps } from "antd";
-import type { Transaction } from "@/types/type";
+import type { Transaction } from "../types/types";
 import { formatNumberWithSpaces } from "@/hooks/useNumberFormatter";
 import { format } from "date-fns";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/app/store";
+import { fetchTransactions, removeTransaction } from "../model/slice";
 
-interface TransactionsTableProps {
-  transactions?: Transaction[];
-  onDelete: (id: number) => void;
-  onEdit: (id: number) => void;
-}
-
-export const TransactionsTable: React.FC<TransactionsTableProps> = ({
-  transactions,
-  onDelete,
-  onEdit,
-}) => {
+export const TransactionsTable: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { transactions, loading, error } = useSelector(
+    (state: RootState) => state.transactions
+  );
+  console.log(transactions, loading, error);
   const columns: TableProps<Transaction>["columns"] = [
     {
       title: "ID",
@@ -45,7 +43,9 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       dataIndex: "date",
       key: "date",
       render: (date: string) => (
-        <span className="whitespace-nowrap">{format(new Date(date), "dd.MM.yyyy HH:mm")}</span>
+        <span className="whitespace-nowrap">
+          {format(new Date(date), "dd.MM.yyyy HH:mm")}
+        </span>
       ),
     },
     {
@@ -63,21 +63,27 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <button onClick={() => onDelete(record.id)} className="text-red-500">
+          <button
+            onClick={() => dispatch(removeTransaction(record.id))}
+            className="text-red-500"
+          >
             Delete
           </button>
-          <button onClick={() => onEdit(record.id)} className="text-yellow-500">
-            Edit
-          </button>
+          <button className="text-yellow-500">Edit</button>
         </Space>
       ),
     },
   ];
 
+  useEffect(() => {
+    dispatch(fetchTransactions());
+  }, [dispatch]);
+
   return (
-    <Table<Transaction>
+    <Table
       rowKey="id"
       columns={columns}
+      pagination={{ hideOnSinglePage: true }}
       dataSource={transactions}
     />
   );
